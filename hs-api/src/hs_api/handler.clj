@@ -7,25 +7,40 @@
 
 (defroutes app-routes
   (context "/patients" []
-           (GET "/" []
-                (ok (db/get-all-patients)))
-           (GET "/:id" [id]
-                (ok (db/get-patient-by-id id))))
+           (GET "/" [] (ok (db/get-all-patients)))
+           (POST "/" {body :body} (created (db/create-patient body)))
+           (context "/:id" [id]
+                    (GET "/" [] (ok (db/get-patient-by-id id)))
+                    (PUT "/" {body :body} (ok (db/update-patient-by-id id body)))))
   (route/not-found "Not Found"))
 
-;; TODO: Improve error handling
+;; TODO Filtering
+;; TODO Input validation
+;; TODO Deletion
+;; TODO Improve error handling
+;; TODO Tests
 (defn wrap-exception [handler]
   (fn [request]
     (try (handler request)
          (catch Exception e
+           (println (str "Caught exception: " (.getMessage e)))
            {:status 500
-            :body "Error occured"}))))
+            :body {:message "Error occured", :details (ex-data e)}
+            }))))
 
 (def app
   (->
    (wrap-json-response app-routes)
    wrap-exception))
 
-;; (app {:request-method :get, :uri "/patients"})
-;; (app {:request-method :get, :uri "/patients/non-existings"})
-;; (app {:request-method :get, :uri "/patients/b1393a03-8453-4f65-8b58-fd5631e66d66"})
+
+(comment
+  (app {:request-method :get, :uri "/patients"})
+  (app {:request-method :post, :uri "/patients", :body {:name "Somebody"} })
+  (app {:request-method :put,
+        :uri "/patients/b1393a03-8453-4f65-8b58-fd5631e66d66",
+        :body {:name "Donald Trumpet",
+               :address "Philadelphia avenue 171",
+               :oms     5646576767 }})
+  (app {:request-method :get, :uri "/patients/non-existings"})
+  (app {:request-method :get, :uri "/patients/b1393a03-8453-4f65-8b58-fd5631e66d66"}))

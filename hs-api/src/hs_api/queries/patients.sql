@@ -28,3 +28,9 @@ WHERE id::text = :id
 insert into patients (name)
 values (:name)
 returning id
+
+-- :name update-patient :! :n
+-- :doc Update a patient
+update patients
+set name = :name, address = :address, oms = :oms
+where id::text = :id

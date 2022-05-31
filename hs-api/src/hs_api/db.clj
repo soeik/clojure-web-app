@@ -15,8 +15,13 @@
 (create-parients-table db)
 
 ;; Create a signle patient
-(defn create-patient [name]
-  (insert-patient db {:name name}))
+(defn create-patient [patient]
+  (insert-patient db patient))
+
+;; TODO: streamline naming, maybe add namespace
+;; Update patient
+(defn update-patient-by-id [id patient]
+  (update-patient db (assoc patient :id id)))
 
 ;; Get all patients
 (defn get-all-patients []
@@ -26,6 +31,12 @@
 (defn get-patient-by-id [id]
   (patient-by-id db {:id id}))
 
-;; (all-patients db)
-;; (get-patient-by-id "b1393a03-8453-4f65-8b58-fd5631e66d66")
-;; (get-patient-by-id "unkown")
+(comment
+  (create-patient {:name "Frank Cowperwood"})
+  (all-patients db)
+  (get-patient-by-id "b1393a03-8453-4f65-8b58-fd5631e66d66")
+  (update-patient-by-id {:id     "b1393a03-8453-4f65-8b58-fd5631e66d66",
+                         :name    "Donald Trumpet",
+                         :address "Philadelphia ave."
+                         :oms     5646576767 })
+  (get-patient-by-id "unkown"))
