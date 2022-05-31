@@ -18,10 +18,14 @@
 (defn create-patient [name]
   (insert-patient db {:name name}))
 
+;; Get all patients
+(defn get-all-patients []
+  (all-patients db))
+
 ;; Get a single patient by id
 (defn get-patient-by-id [id]
-  (patient-by-id {:id id}))
+  (patient-by-id db {:id id}))
 
 ;; (all-patients db)
 ;; (get-patient-by-id "b1393a03-8453-4f65-8b58-fd5631e66d66")
-;; (create-patient "Donald Trump")
+;; (get-patient-by-id "unkown")
