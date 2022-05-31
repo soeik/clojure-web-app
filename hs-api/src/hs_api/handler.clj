@@ -25,7 +25,7 @@
          (catch Exception e
            (println (str "Caught exception: " (.getMessage e)))
            {:status 500
-            :body {:message "Error occured", :details (ex-data e)}
+            :body {:message (str "Error occured: " (.getMessage e))}
             }))))
 
 (def app
@@ -36,7 +36,7 @@
 
 (comment
   (app {:request-method :get, :uri "/patients"})
-  (app {:request-method :post, :uri "/patients", :body {:name "Somebody"} })
+  (app {:request-method :post, :uri "/patients", :body {:name2 "Somebody"} })
   (app {:request-method :put,
         :uri "/patients/b1393a03-8453-4f65-8b58-fd5631e66d66",
         :body {:name "Donald Trumpet",
