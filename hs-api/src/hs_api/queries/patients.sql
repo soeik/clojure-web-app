@@ -11,13 +11,12 @@ oms numeric,
 PRIMARY KEY (id)
 )
 
-
--- :name all-patients
+-- :name get-all-patients
 -- :doc Get all patients
 SELECT *
 FROM patients
 
--- :name patient-by-id
+-- :name get-patient
 -- :doc Get a single patient by id
 SELECT *
 FROM patients
@@ -34,3 +33,7 @@ returning id
 update patients
 set name = :name, address = :address, oms = :oms
 where id::text = :id
+
+-- :name delete-patient :! :n
+-- :doc Delete a patient
+delete from patients where id::text = :id
