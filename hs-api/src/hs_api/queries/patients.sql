@@ -24,8 +24,8 @@ WHERE id::text = :id
 
 -- :name insert-patient :<!
 -- :doc Insert a single patient
-insert into patients (name)
-values (:name)
+insert into patients (name, address, oms)
+values (:name, :address, :oms)
 returning id
 
 -- :name update-patient :! :n

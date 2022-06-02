@@ -3,20 +3,25 @@
             [compojure.route :as route]
             [ring.middleware.json :refer [wrap-json-response]]
             [ring.util.http-response :refer :all]
+            [hs-api.patient :refer [patient-valid?]]
             [hs-api.db :as db]))
 
 (defroutes app-routes
   (context "/patients" []
            (GET "/" [] (ok (db/get-all-patients)))
-           (POST "/" {body :body} (created (db/create-patient body)))
+           (POST "/" {body :body} (if (patient-valid? body)
+                                    (created (db/create-patient body))
+                                    (bad-request "Invalid input")))
            (context "/:id" [id]
                     (GET "/" [] (ok (db/get-patient id)))
-                    (PUT "/" {body :body} (ok (db/update-patient id body)))
+                    (PUT "/" {body :body} (if (patient-valid? body)
+                                            (ok (db/update-patient id body))
+                                            (bad-request "Invalid input")))
                     (DELETE "/" [] (ok (db/delete-patient id)))))
   (route/not-found "Not Found"))
 
 ;; TODO Filtering
-;; TODO Input validation
+;; TODO Improve input validation
 ;; TODO Improve error handling
 ;; TODO Tests
 (defn wrap-exception [handler]
@@ -36,7 +41,9 @@
 
 (comment
   (app {:request-method :get, :uri "/patients"})
-  (app {:request-method :post, :uri "/patients", :body {:name2 "Somebody"} })
+  (app {:request-method :post, :uri "/patients", :body {:oms 1234567890123456,
+                                                        :name "Frank Cowperwood",
+                                                        :address "Sundgauerstr. 123" }})
   (app {:request-method :put,
         :uri "/patients/b1393a03-8453-4f65-8b58-fd5631e66d66",
         :body {:name "Donald Trumpet",
