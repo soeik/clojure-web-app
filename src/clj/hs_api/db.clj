@@ -1,5 +1,5 @@
 (ns hs-api.db
-  (:require [hs-api.db.queries :as query])
+  (:require [hs-api.queries :as query])
   (:require [clojure.java.jdbc :as j]))
 
 (def db {:dbtype "postgresql"

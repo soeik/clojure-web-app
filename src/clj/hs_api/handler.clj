@@ -7,17 +7,19 @@
             [hs-api.db :as db]))
 
 (defroutes app-routes
-  (context "/patients" []
-           (GET "/" [] (ok (db/get-all-patients)))
-           (POST "/" {body :body} (if (patient-valid? body)
-                                    (created (db/create-patient body))
-                                    (bad-request "Invalid input")))
-           (context "/:id" [id]
-                    (GET "/" [] (ok (db/get-patient id)))
-                    (PUT "/" {body :body} (if (patient-valid? body)
-                                            (ok (db/update-patient id body))
-                                            (bad-request "Invalid input")))
-                    (DELETE "/" [] (ok (db/delete-patient id)))))
+  (GET "/" [] (ok "<h1>Clojure sparks joy!</h1>"))
+  (context "/api" []
+           (context "/patients" []
+                    (GET "/" [] (ok (db/get-all-patients)))
+                    (POST "/" {body :body} (if (patient-valid? body)
+                                             (created (db/create-patient body))
+                                             (bad-request "Invalid input")))
+                    (context "/:id" [id]
+                             (GET "/" [] (ok (db/get-patient id)))
+                             (PUT "/" {body :body} (if (patient-valid? body)
+                                                     (ok (db/update-patient id body))
+                                                     (bad-request "Invalid input")))
+                             (DELETE "/" [] (ok (db/delete-patient id))))))
   (route/not-found "Not Found"))
 
 ;; TODO Filtering

@@ -3,7 +3,7 @@
   :url ""
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.10.0"]
-                 [org.clojure.clr/spec.alpha "0.3.218"]
+                 [org.clojure/spec.alpha "0.3.218"]
                  [compojure "1.6.1"]
                  [metosin/ring-http-response "0.9.3"]
                  [ring/ring-json "0.5.1"]
@@ -14,6 +14,10 @@
   :plugins [[lein-ring "0.12.5"]]
   :ring {:handler hs-api.handler/app
          :port 9000}
+  :main hs-api.server
+
+  :source-paths ["src/clj" "src/cljc" "src/cljs"]
+
   :Profilesp
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring/ring-mock "0.3.2"]]}})
