@@ -1,0 +1,11 @@
+{
+  "name": "clojure-web-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/soeik/clojure-web-app.git",
+  "author": "Kirill Stepanov",
+  "license": "MIT",
+  "dependencies": {
+    "shadow-cljs": "^2.19.1"
+  }
+}
