@@ -12,9 +12,7 @@
                  [metosin/ring-http-response "0.9.3"]
                  [com.layerware/hugsql "0.5.3"]
                  [org.postgresql/postgresql "42.3.1"]
-                 [reagent "1.1.1"]
-                 [reagent-utils "0.3.4"]
-                 [hiccup "1.0.5"]
+                 [lilactown/helix "0.1.6"]
                  [cljs-http "0.1.46"]]
 
   :plugins [[lein-ring "0.12.5"]

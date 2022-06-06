@@ -2,6 +2,7 @@
  :builds       {:app {:target     :browser
                       :output-dir "resources/public/js"
                       :asset-path "/js"
-                      :modules    {:app {:entries [hs-api.core]}}
+                      :modules    {:app {:entries [hs-api.core]
+                                         :init-fn hs-api.core/init!}}
                       :devtools   {:after-load hs-api.core/mount-root}}}
  :dev-http     {9001 {:root       "resources/public"}}}

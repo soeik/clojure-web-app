@@ -1,16 +1,28 @@
 (ns hs-api.core
   (:require
-   [reagent.core :as reagent :refer [atom]]
-   [reagent.dom :as rdom]))
+   [helix.core :refer [defnc $]]
+   [helix.hooks :as hooks]
+   [helix.dom :as d]
+   ["react-dom" :as rdom]))
 
 
-(defn some-component []
-  [:div
-   [:h3 "I am react component!"]
-   [:p.someclass
-    "I have " [:strong "bold"]
-    [:span {:style {:color "red"}} " and red"]
-    " text."]])
+;; define components using the `defnc` macro
+(defnc greeting
+  "A component which greets a user."
+  [{:keys [name]}]
+  ;; use helix.dom to create DOM elements
+  (d/div "Hello, " (d/strong name) "!"))
 
-(defn mount-root []
-  (rdom/render [some-component] (.getElementById js/document "app")))
+(defnc app []
+  (let [[state set-state] (hooks/use-state {:name "Helix User"})]
+    (d/div
+     (d/h1 "Welcome!")
+     ;; create elements out of components
+     ($ greeting {:name (:name state)})
+     (d/input {:value (:name state)
+               :on-change #(set-state assoc :name (.. % -target -value))}))))
+
+(defn render []
+  (rdom/render ($ app) (js/document.getElementById "app")))
+
+(defn ^:export init! [] (render))
