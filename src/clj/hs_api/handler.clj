@@ -1,14 +1,18 @@
 (ns hs-api.handler
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
-            [ring.middleware.json :refer [wrap-json-response]]
+            [ring.middleware.data.json :refer [wrap-json-request
+                                               wrap-json-response]]
             [ring.util.http-response :refer :all]
             [hs-api.patient :refer [patient-valid?]]
             [hs-api.db :as db]))
 
+(defn id->str [col]
+  (update col :id str))
+
 (defroutes app-routes
   (context "/api/patients" []
-           (GET "/" [] (ok (db/get-all-patients)))
+           (GET "/" [] (ok (map id->str (db/get-all-patients))))
            (POST "/" {body :body} (if (patient-valid? body)
                                       (created (db/create-patient body))
                                       (bad-request "Invalid input")))
@@ -36,11 +40,14 @@
 
 (def app
   (->
-   (wrap-json-response app-routes)
+   app-routes
+   wrap-json-request
+   wrap-json-response
    wrap-exception))
 
 
 (comment
+  (uuid->str {:id 123})
   (app {:request-method :get, :uri "/api/patients"})
   (app {:request-method :post, :uri "/api/patients", :body {:oms 1234567890123456,
                                                         :name "Frank Cowperwood",
