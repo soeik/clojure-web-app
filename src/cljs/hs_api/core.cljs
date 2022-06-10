@@ -3,38 +3,54 @@
    [helix.core :refer [defnc $]]
    [helix.hooks :as hooks]
    [helix.dom :as d]
-   ["react-dom" :as rdom]))
+   ["react-dom" :as rdom]
+   [hs-api.http :refer [request]]))
 
-;; define components using the `defnc` macro
-(defnc greeting
-  "A component which greets a user."
+(defnc patient-row
   [{:keys [name]}]
-  ;; use helix.dom to create DOM elements
-  (d/label "Hello, " (d/strong name) "!"))
+  (d/div name))
 
-(defnc app []
-  (let [[state set-state] (hooks/use-state {:name "Helix User"})]
-    (d/div
-     {:class-name "container"}
-     (d/div
-      {:class-name "row"}
-      (d/h1 "Welcome!"))
-     ;; create elements out of components
-     (d/div
-      {:class-name "row"}
-      ($ greeting {:name (:name state)}))
-     (d/div
-      {:class-name "row"}
-      (d/input {:class-name "u-full-width"
-                :type "text"
-                :value (:name state)
-                :on-change #(set-state assoc :name (.. % -target -value))}))
-     (d/div
-      {:class-name "row"}
-      (d/button {:class-name "button-primary"
-                 :type "button"} "Submit something")))))
+(defnc patients-table []
+  (let [[patients set-patients] (hooks/use-state [])]
+    (do
+      (hooks/use-effect [] (request :get "/api/patients" set-patients))
+      ;; (map patient-row (patients :name))
+      (d/div "Number of fetched patients: " (count patients)))))
+
+(defnc app [] ($ patients-table))
 
 (defn render []
   (rdom/render ($ app) (js/document.getElementById "app")))
 
 (defn ^:export init! [] (render))
+
+(comment
+  ;; code samples
+  ;; define components using the `defnc` macro
+  (defnc greeting
+    "A component which greets a user."
+    [{:keys [name]}]
+    ;; use helix.dom to create DOM elements
+    (d/label "Hello, " (d/strong name) "!"))
+
+  (defnc app-example []
+    (let [[state set-state] (hooks/use-state {:name "Helix User"})]
+      (d/div
+       {:class-name "container"}
+       (d/div
+        {:class-name "row"}
+        (d/h1 "Welcome!"))
+       ;; create elements out of components
+       (d/div
+        {:class-name "row"}
+        ($ greeting {:name (:name state)}))
+       (d/div
+        {:class-name "row"}
+        (d/input {:class-name "u-full-width"
+                  :type "text"
+                  :value (:name state)
+                  :on-change #(set-state assoc :name (.. % -target -value))}))
+       (d/div
+        {:class-name "row"}
+        (d/button {:class-name "button-primary"
+                   :type "button"} "Submit something"))))))
