@@ -7,15 +7,16 @@
    [hs-api.http :refer [request]]))
 
 (defnc patient-row
-  [{:keys [name]}]
-  (d/div name))
+  [{:keys [patient]}]
+  (d/div {:key (patient :id)} (patient :name) ": " (patient :oms)))
 
 (defnc patients-table []
   (let [[patients set-patients] (hooks/use-state [])]
     (do
       (hooks/use-effect [] (request :get "/api/patients" set-patients))
-      ;; (map patient-row (patients :name))
-      (d/div "Number of fetched patients: " (count patients)))))
+      (d/div
+       (for [patient patients] ($ patient-row  {:patient patient}))
+       (d/div "Number of fetched patients: " (count patients))))))
 
 (defnc app [] ($ patients-table))
 
