@@ -8,17 +8,32 @@
 
 (defnc patient-row
   [{:keys [patient]}]
-  (d/div {:key (patient :id)} (patient :name) ": " (patient :oms)))
+  (d/tr
+   {:key (patient :id)}
+   (d/td (patient :name))
+   (d/td (patient :oms))
+   (d/td (patient :address))))
 
 (defnc patients-table []
   (let [[patients set-patients] (hooks/use-state [])]
     (do
       (hooks/use-effect [] (request :get "/api/patients" set-patients))
       (d/div
-       (for [patient patients] ($ patient-row  {:patient patient}))
-       (d/div "Number of fetched patients: " (count patients))))))
+       (d/table
+        {:class-name "u-full-width"}
+        (d/thead
+         (d/tr
+          (d/th "Name")
+          (d/th "OMS")
+          (d/th "Address")))
+        (d/tbody
+         (for [patient patients] ($ patient-row  {:patient patient}))))
+       (d/div "Total rows: " (count patients))))))
 
-(defnc app [] ($ patients-table))
+(defnc app []
+  (d/div
+   {:class-name "container"}
+   ($ patients-table)))
 
 (defn render []
   (rdom/render ($ app) (js/document.getElementById "app")))
