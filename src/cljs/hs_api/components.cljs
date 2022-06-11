@@ -1,10 +1,7 @@
 (ns hs-api.components
   (:require
    [helix.core :refer [defnc $]]
-   [helix.hooks :as hooks]
-   [helix.dom :as d]
-   ["react-dom" :as rdom]
-   [hs-api.http :refer [request]]))
+   [helix.dom :as d]))
 
 (defnc app-header []
   (d/div
@@ -14,7 +11,49 @@
     (d/h4 "HS"))
    (d/div
     {:class-name "eleven columns"}
-    (d/button {:class-name "u-pull-right"} "New"))))
+    (d/button {:class-name "u-pull-right button button-primary"} "New"))))
+
+(defnc patient-form []
+  (d/form
+   (d/div {:class-name "row"}
+          (d/div {:class-name "twelve columns"}
+                 (d/label {:for "name"} "Name")
+                 (d/input {:id "name"
+                           :name "name"
+                           :type "text"
+                           :class-name "u-full-width"})))
+   (d/div {:class-name "row"}
+          (d/div {:class-name "six columns"}
+                 (d/label {:for "gender"} "Gender")
+                 (d/select {:id "gender"
+                            :name "gender"
+                            :class-name "u-full-width"}
+                           (d/option {:disabled true :selected true} "")
+                           (d/option {:value "male"} "Male")
+                           (d/option {:value "female"} "Female")))
+          (d/div {:class-name "six columns"}
+                 (d/label {:for "dateOfBirth"} "Date of birth")
+                 (d/input {:id "dateOfBirth"
+                           :name "dateOfBirth"
+                           :type "date"
+                           :class-name "u-full-width"})))
+   (d/div {:class-name "row"}
+          (d/div {:class-name "six columns"}
+                 (d/label {:for "address"} "Address")
+                 (d/input {:id "address"
+                           :name "address"
+                           :type "text"
+                           :class-name "u-full-width"}))
+          (d/div {:class-name "six columns"}
+                 (d/label {:for "oms"} "OMS")
+                 (d/input {:id "oms"
+                           :name "oms"
+                           :type "text"
+                           :class-name "u-full-width"})))
+   (d/div {:class-name "row"}
+          (d/div {:class-name "twelve coumns"}
+                 (d/button {:class-name "button button-primary u-full-width"}
+                           "Save")))))
 
 (defnc patient-row
   [{:keys [id name oms address]}]
@@ -23,35 +62,33 @@
    (d/td oms)
    (d/td address)))
 
-(defnc patients-table []
-  (let [[patients set-patients] (hooks/use-state [])]
-    (do
-      (hooks/use-effect [] (request :get "/api/patients" set-patients))
-      (d/div
-       (d/table
-        {:class-name "u-full-width"}
-        (d/thead
-         (d/tr
-          (d/th "Name")
-          (d/th "OMS")
-          (d/th "Address")))
-        (d/tbody
-         (for [patient patients]
-           ($ patient-row {:key (patient :id)
-                           :id (patient :id)
-                           :name (patient :name)
-                           :oms (patient :oms)
-                           :address (patient :address)}))))
-       (d/div "Total rows: " (count patients))))))
+(defnc patients-table [{:keys [patients]}]
+  (d/div
+   (d/table
+    {:class-name "u-full-width"}
+    (d/thead
+     (d/tr
+      (d/th "Name")
+      (d/th "OMS")
+      (d/th "Address")))
+    (d/tbody
+     (for [patient patients]
+       ($ patient-row {:key (patient :id)
+                       :id (patient :id)
+                       :name (patient :name)
+                       :oms (patient :oms)
+                       :address (patient :address)}))))
+   (d/div "Total rows: " (count patients))))
 
-(defnc new-patient [] (d/div "New"))
-
-(defnc edit-patient [] (d/div "Edit"))
 
 
 (comment
   ;; code samples
   ;; define components using the `defnc` macro
+  (defnc wrapper [{:keys [children]}]
+      ;; (js/console.log "I am wrapper")
+      (d/div {:style {:color "pink"}} "children: " children))
+
   (defnc greeting
     "A component which greets a user."
     [{:keys [name]}]

@@ -4,10 +4,10 @@
    [helix.dom :as d]
    ["react-dom" :as rdom]
    ["react-router-dom" :as router]
-   [hs-api.components :as c]))
+   [hs-api.components :as c]
+   [hs-api.views :as v]))
 
 ;; TODO: Switch to BrowserRouter
-;; TODO: Move pages to a separate ns
 
 (defnc app []
   (d/div
@@ -15,12 +15,14 @@
    ($ c/app-header)
    ($ router/HashRouter
       ($ router/Routes
-         ($ router/Route {:path    "/"
-                          :element ($ c/patients-table)})
-         ($ router/Route {:path    "/new"
-                          :element ($ c/new-patient)})
-         ($ router/Route {:path    "/edit"
-                          :element ($ c/edit-patient)})))))
+         ($ router/Route {:path "/"
+                          :element ($ router/Navigate {:to "/patients"})})
+         ($ router/Route {:path    "/patients"
+                          :element ($ v/list-patients)})
+         ($ router/Route {:path    "/patients/new"
+                          :element ($ v/new-patient)})
+         ($ router/Route {:path    "/patients/:id"
+                          :element ($ v/edit-patient)})))))
 
 (defn render []
   (rdom/render ($ app) (js/document.getElementById "app")))
