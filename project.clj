@@ -8,6 +8,7 @@
                  [org.clojure/spec.alpha "0.3.218"]
                  [org.slf4j/slf4j-simple "1.7.5"]
                  [chbrown/ring-data.json "0.1.0"]
+                 [ring/ring-jetty-adapter "1.9.5"]
                  [compojure "1.6.1"]
                  [metosin/ring-http-response "0.9.3"]
                  [com.layerware/hugsql "0.5.3"]
@@ -16,7 +17,7 @@
                  [cljs-http "0.1.46"]]
 
   :plugins [[lein-ring "0.12.5"]
-            [lein-cljsbuild "1.1.7"]]
+            [Lein-cljsbuild "1.1.7"]]
 
   :ring {:handler hs-api.handler/app
          :port 9000}
