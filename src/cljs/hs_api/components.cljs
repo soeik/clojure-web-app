@@ -1,17 +1,24 @@
 (ns hs-api.components
   (:require
    [helix.core :refer [defnc $]]
-   [helix.dom :as d]))
+   [helix.dom :as d]
+   ["react-router-dom" :as router]))
 
 (defnc app-header []
   (d/div
    {:class-name "row"}
+   (d/h2 "HS")))
+
+(defnc patients-header []
+  (d/div
+   {:class-name "row"}
    (d/div
-    {:class-name "one column"}
-    (d/h4 "HS"))
+    {:class-name "ten columns"}
+    (d/input {:type "text" :class-name "u-full-width"}))
    (d/div
-    {:class-name "eleven columns"}
-    (d/button {:class-name "u-pull-right button button-primary"} "New"))))
+    {:class-name "two columns"}
+    ($ router/Link {:to "/patients/new"}
+       (d/button {:class-name "u-pull-right button button-primary"} "New")))))
 
 (defnc patient-form []
   (d/form
@@ -50,8 +57,13 @@
                            :name "oms"
                            :type "text"
                            :class-name "u-full-width"})))
+   (d/hr)
    (d/div {:class-name "row"}
-          (d/div {:class-name "twelve coumns"}
+          (d/div {:class-name "six columns"}
+                 ($ router/Link {:to "/patients"}
+                    (d/button {:class-name "button u-full-width"}
+                              "Cancel")))
+          (d/div {:class-name "six columns"}
                  (d/button {:class-name "button button-primary u-full-width"}
                            "Save")))))
 

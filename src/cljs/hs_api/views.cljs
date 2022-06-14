@@ -10,7 +10,9 @@
   (let [[patients set-patients] (hooks/use-state [])]
     (do
       (hooks/use-effect [] (request :get "/api/patients" set-patients))
-      ($ c/patients-table {:patients patients}))))
+      (d/div
+       ($ c/patients-header)
+       ($ c/patients-table {:patients patients})))))
 
 (defnc new-patient []
   (d/div
