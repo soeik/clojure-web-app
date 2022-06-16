@@ -14,7 +14,7 @@
                  [com.layerware/hugsql "0.5.3"]
                  [org.postgresql/postgresql "42.3.1"]
                  [lilactown/helix "0.1.6"]
-                 [cljs-http "0.1.46"]]
+                 [cljs-ajax "0.7.5"]]
 
   :plugins [[lein-ring "0.12.5"]
             [Lein-cljsbuild "1.1.7"]]
@@ -32,7 +32,6 @@
   {:dev {:plugins []
          :dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring/ring-mock "0.3.2"]
-                        [thheller/shadow-cljs "2.19.1"]
-                        [reagent "1.1.1"]]}
+                        [thheller/shadow-cljs "2.19.1"]]}
 
    :cljs {:dependencies [[com.google.javascript/closure-compiler-unshaded "v20220502"]]}})

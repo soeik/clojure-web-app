@@ -29,19 +29,19 @@
 ;; TODO Improve input validation
 ;; TODO Improve error handling
 ;; TODO Tests
+;; FIXME: Error with the date field
 (defn wrap-exception [handler]
   (fn [request]
     (try (handler request)
          (catch Exception e
            (println (str "Caught exception: " (.getMessage e)))
            {:status 500
-            :body {:message (str "Error occured: " (.getMessage e))}
-            }))))
+            :body {:message (str "Error occured: " (.getMessage e))}}))))
 
 (def app
   (->
    app-routes
-   wrap-json-request
+   (wrap-json-request :key-fn keyword)
    wrap-json-response
    wrap-exception))
 
@@ -49,9 +49,10 @@
 (comment
   (uuid->str {:id 123})
   (app {:request-method :get, :uri "/api/patients"})
-  (app {:request-method :post, :uri "/api/patients", :body {:oms 1234567890123456,
-                                                        :name "Frank Cowperwood",
-                                                        :address "Sundgauerstr. 123" }})
+  (app {:request-method :post, :uri "/api/patients", :body {:oms "1234567890123456",
+                                                            :name "Frank Cowperwood",
+                                                            :gender "M"
+                                                            :address "Sundgauerstr. 123" }})
   (app {:request-method :put,
         :uri "/api/patients/b1393a03-8453-4f65-8b58-fd5631e66d66",
         :body {:name "Donald Trumpet",

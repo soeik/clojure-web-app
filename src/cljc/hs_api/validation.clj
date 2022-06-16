@@ -22,5 +22,5 @@
 (defn oms-valid?
   ([] false)
   ([oms] (and
-          (number? oms)
-          (= (count (str oms)) 16))))
+          (string? oms)
+          (= (count oms) 16))))

@@ -1,6 +1,7 @@
 (ns hs-api.components
   (:require
    [helix.core :refer [defnc $]]
+   [helix.hooks :as hooks]
    [helix.dom :as d]
    ["react-router-dom" :as router]))
 
@@ -20,52 +21,90 @@
     ($ router/Link {:to "/patients/new"}
        (d/button {:class-name "u-pull-right button button-primary"} "New")))))
 
-(defnc patient-form []
-  (d/form
-   (d/div {:class-name "row"}
-          (d/div {:class-name "twelve columns"}
-                 (d/label {:for "name"} "Name")
-                 (d/input {:id "name"
-                           :name "name"
-                           :type "text"
-                           :class-name "u-full-width"})))
-   (d/div {:class-name "row"}
-          (d/div {:class-name "six columns"}
-                 (d/label {:for "gender"} "Gender")
-                 (d/select {:id "gender"
-                            :name "gender"
-                            :class-name "u-full-width"}
-                           (d/option {:disabled true :selected true} "")
-                           (d/option {:value "male"} "Male")
-                           (d/option {:value "female"} "Female")))
-          (d/div {:class-name "six columns"}
-                 (d/label {:for "dateOfBirth"} "Date of birth")
-                 (d/input {:id "dateOfBirth"
-                           :name "dateOfBirth"
-                           :type "date"
-                           :class-name "u-full-width"})))
-   (d/div {:class-name "row"}
-          (d/div {:class-name "six columns"}
-                 (d/label {:for "address"} "Address")
-                 (d/input {:id "address"
-                           :name "address"
-                           :type "text"
-                           :class-name "u-full-width"}))
-          (d/div {:class-name "six columns"}
-                 (d/label {:for "oms"} "OMS")
-                 (d/input {:id "oms"
-                           :name "oms"
-                           :type "text"
-                           :class-name "u-full-width"})))
-   (d/hr)
-   (d/div {:class-name "row"}
-          (d/div {:class-name "six columns"}
-                 ($ router/Link {:to "/patients"}
-                    (d/button {:class-name "button u-full-width"}
-                              "Cancel")))
-          (d/div {:class-name "six columns"}
-                 (d/button {:class-name "button button-primary u-full-width"}
-                           "Save")))))
+(defnc name-input [{:keys [value on-change]}]
+  (d/input {:id "name"
+            :name "name"
+            :type "text"
+            :class-name "u-full-width"
+            :value value
+            :on-change on-change}))
+
+(defnc gender-input [{:keys [value on-change]}]
+  (d/select {:id "gender"
+             :name "gender"
+             :class-name "u-full-width"
+             :value value
+             :on-change on-change}
+            (d/option {:disabled true} "")
+            (d/option {:value "M"} "Male")
+            (d/option {:value "F"} "Female")))
+
+(defnc date-of-birth-input [{:keys [value on-change]}]
+  (d/input {:id "date-of-birth"
+            :name "date-of-birth"
+            :type "date"
+            :class-name "u-full-width"
+            :value value
+            :on-change on-change}))
+
+(defnc address-input [{:keys [value on-change]}]
+  (d/input {:id "address"
+            :name "address"
+            :type "text"
+            :class-name "u-full-width"
+            :value value
+            :on-change on-change}))
+
+(defnc oms-input [{:keys [value on-change]}]
+  (d/input {:id "oms"
+            :name "oms"
+            :type "text"
+            :class-name "u-full-width"
+            :value value
+            :on-change on-change}))
+
+(defnc patient-form [{:keys [on-submit]}]
+  (let [[form set-form]
+        (hooks/use-state {:name "Test"
+                          :gender "M"
+                          :date-of-birth ""
+                          :address "Test address"
+                          :oms "1234567890123456"})]
+    (d/form
+     (d/div {:class-name "row"}
+            (d/div {:class-name "twelve columns"}
+                   (d/label {:for "name"} "Name")
+                   ($ name-input {:value (:name form)
+                                  :on-change #(set-form assoc :name (.. % -target -value))})))
+     (d/div {:class-name "row"}
+            (d/div {:class-name "six columns"}
+                   (d/label {:for "gender"} "Gender")
+                   ($ gender-input {:value (:gender form)
+                                    :on-change #(set-form assoc :gender (.. % -target -value))}))
+            (d/div {:class-name "six columns"}
+                   (d/label {:for "date-of-birth"} "Date of birth")
+                   ($ date-of-birth-input {:value (:date-of-birth form)
+                                           :on-change #(set-form assoc :date-of-birth (.. % -target -value))})))
+     (d/div {:class-name "row"}
+            (d/div {:class-name "six columns"}
+                   (d/label {:for "address"} "Address")
+                   ($ address-input {:value (:address form)
+                                     :on-change #(set-form assoc :address (.. % -target -value))}))
+            (d/div {:class-name "six columns"}
+                   (d/label {:for "oms"} "OMS")
+                   ($ oms-input {:value (:oms form)
+                                 :on-change #(set-form assoc :oms (.. % -target -value))})))
+     (d/hr)
+     (d/div {:class-name "row"}
+            (d/div {:class-name "six columns"}
+                   ($ router/Link {:to "/patients"}
+                      (d/button {:class-name "button u-full-width"}
+                                "Cancel")))
+            (d/div {:class-name "six columns"}
+                   (d/button {:class-name "button button-primary u-full-width"
+                              :type "button"
+                              :on-click #(on-submit form)}
+                             "Save"))))))
 
 (defnc patient-row
   [{:keys [id name oms address]}]

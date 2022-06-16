@@ -3,13 +3,14 @@
   (:require [clojure.java.jdbc :as j]))
 
 (def db {:dbtype "postgresql"
-            :dbname "hs-db"
-            :host (or (System/getenv "DB_HOST") "localhost")
-            :user (or (System/getenv "DB_USER") "postgres")
-            :password (System/getenv "DB_PASSWORD")})
+         :dbname "hs-db"
+         :host (or (System/getenv "DB_HOST") "localhost")
+         :user (or (System/getenv "DB_USER") "postgres")
+         :password (System/getenv "DB_PASSWORD")
+         :stringtype "unspecified"})
 
-;; Create table patients if not exists
-(query/create-parients-table db)
+;; Init db
+(query/init-db db)
 
 ;; Create a signle patient
 (defn create-patient [patient]
@@ -33,11 +34,15 @@
 
 
 (comment
-  (create-patient {:name "Frank Cowperwood"})
+  (create-patient {:name "Frank Cowperwood"
+                   :date-of-birth "1989-05-05"
+                   :address "Berlinerstrasse 124, Berlin, Germany"
+                   :oms "1234567890123456"
+                   :gender "M"})
   (get-all-patients)
   (get-patient "b1393a03-8453-4f65-8b58-fd5631e66d66")
-  (update-patient {:id     "b1393a03-8453-4f65-8b58-fd5631e66d66",
-                         :name    "Donald Trumpet",
-                         :address "Philadelphia ave."
-                         :oms     5646576767 })
+  (update-patient {:id "b1393a03-8453-4f65-8b58-fd5631e66d66",
+                   :name "Donald Trumpet",
+                   :address "Philadelphia ave."
+                   :oms 5646576767 })
   (get-patient "unkown"))

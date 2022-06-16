@@ -5,4 +5,6 @@
                       :modules    {:app {:entries [hs-api.core]
                                          :init-fn hs-api.core/init!}}
                       :devtools   {:after-load hs-api.core/mount-root}}}
- :dev-http     {9001 {:root       "resources/public"}}}
+ :dev-http     {9001 {:root       "resources/public"
+                      :proxy-rewrite-host-header true
+                      :proxy-url  "http://localhost:9000"}}}
