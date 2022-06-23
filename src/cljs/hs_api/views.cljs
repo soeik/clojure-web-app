@@ -4,13 +4,20 @@
    [helix.hooks :as hooks]
    [helix.dom :as d]
    [hs-api.client :as client]
-   [hs-api.components :as c]))
+   [hs-api.components :as c]
+   ["react-router-dom" :as router]
+   [goog.object :as gobj]))
 
 (defnc list-patients []
-  (let [[patients set-patients] (hooks/use-state nil)
+  (let [[search] (router/useSearchParams)
+        [patients set-patients] (hooks/use-state nil)
         [error set-error] (hooks/use-state nil)]
     (do
-      (hooks/use-effect [] (client/get-patients set-patients set-error))
+      ;; TODO: No loading state when searching
+      (hooks/use-effect [search] (client/search-patients
+                                  (js/search.get "query")
+                                  set-patients
+                                  set-error))
       (hooks/use-effect [patients, error] (js/console.log patients error) )
       (d/div
        ($ c/patients-header)
@@ -28,4 +35,29 @@
                      patient js/console.log
                      js/console.error))})))
 
-(defnc edit-patient [] (d/div "Edit"))
+(defnc edit-patient []
+  (let [params (router/useParams)
+        id (gobj/get params "id")
+        [patient set-patient] (hooks/use-state nil)
+        [error set-error] (hooks/use-state nil)]
+    (do
+      (hooks/use-effect [] (client/get-patient-by-id
+                            id
+                            set-patient
+                            set-error))
+      (hooks/use-effect [patient, error, params] (js/console.log id  patient error) )
+      (d/div
+       ($ c/patients-header)
+       (cond
+         ;; TODO: Loading and error components
+         (some? patient) ($ c/patient-form
+                            {:patient patient
+                             :on-submit (fn [patient]
+                                          ;; TODO: Fix error on submit
+                                          (client/update-patient
+                                           id
+                                           patient
+                                           js/console.log
+                                           js/console.error))})
+         (some? error) (d/div (str "Error occurred: " (:status-text error)))
+         :else (d/div "Loading"))))))

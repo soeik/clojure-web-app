@@ -11,15 +11,24 @@
    (d/h2 "HS")))
 
 (defnc patients-header []
-  (d/div
-   {:class-name "row"}
-   (d/div
-    {:class-name "ten columns"}
-    (d/input {:type "text" :class-name "u-full-width"}))
-   (d/div
-    {:class-name "two columns"}
-    ($ router/Link {:to "/patients/new"}
-       (d/button {:class-name "u-pull-right button button-primary"} "New")))))
+  (let [[search set-search] (router/useSearchParams)
+        [query set-query] (hooks/use-state (or (js/search.get "query") ""))]
+    (d/div
+     {:class-name "row"}
+     (d/div
+      {:class-name "ten columns"}
+      (d/input {:type "text"
+                :class-name "u-full-width"
+                :value query
+                ;; TODO: On keyDown enter
+                :on-change #(set-query (.. % -target -value))})
+      ;; TODO: Layout
+      (d/button {:class-name "button button-primary"
+                 :on-click #(set-search #js {"query" query})} "Search"))
+     (d/div
+      {:class-name "two columns"}
+      ($ router/Link {:to "/patients/new"}
+         (d/button {:class-name "u-pull-right button button-primary"} "New"))))))
 
 (defnc name-input [{:keys [value on-change]}]
   (d/input {:id "name"
@@ -63,13 +72,15 @@
             :value value
             :on-change on-change}))
 
-(defnc patient-form [{:keys [on-submit]}]
+(def empty-patient {:name "Test"
+                    :gender "M"
+                    :date-of-birth ""
+                    :address "Test address"
+                    :oms "1234567890123456"})
+
+(defnc patient-form [{:keys [on-submit patient]}]
   (let [[form set-form]
-        (hooks/use-state {:name "Test"
-                          :gender "M"
-                          :date-of-birth ""
-                          :address "Test address"
-                          :oms "1234567890123456"})]
+        (hooks/use-state (or patient empty-patient))]
     (d/form
      (d/div {:class-name "row"}
             (d/div {:class-name "twelve columns"}
@@ -109,14 +120,14 @@
 (defnc patient-row
   [{:keys [id name oms address]}]
   (d/tr
-   (d/td name)
+   (d/td (d/a {:href (str "#/patients/" id)} name))
    (d/td oms)
    (d/td address)))
 
 (defnc patients-table [{:keys [patients]}]
   (d/div
    (d/table
-    {:class-name "u-full-width"}
+    {:class-name "patients-table u-full-width"}
     (d/thead
      (d/tr
       (d/th "Name")
