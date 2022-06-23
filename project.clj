@@ -9,6 +9,7 @@
                  [org.slf4j/slf4j-simple "1.7.5"]
                  [chbrown/ring-data.json "0.1.0"]
                  [ring/ring-jetty-adapter "1.9.5"]
+                 [ring/ring-defaults "0.3.3"]
                  [compojure "1.6.1"]
                  [metosin/ring-http-response "0.9.3"]
                  [com.layerware/hugsql "0.5.3"]
