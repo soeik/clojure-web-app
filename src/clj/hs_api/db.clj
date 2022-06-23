@@ -24,6 +24,9 @@
 (defn get-all-patients []
   (query/get-all-patients db))
 
+(defn search-patients [search-query]
+  (query/search-patients db {:search-query (str "%" search-query "%")}))
+
 ;; Get a single patient by id
 (defn get-patient [id]
   (query/get-patient db {:id id}))
@@ -34,6 +37,7 @@
 
 
 (comment
+  (search-patients "Frank")
   (create-patient {:name "Frank Cowperwood"
                    :date-of-birth "1989-05-05"
                    :address "Berlinerstrasse 124, Berlin, Germany"

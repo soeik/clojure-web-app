@@ -3,6 +3,7 @@
             [compojure.route :as route]
             [ring.middleware.data.json :refer [wrap-json-request
                                                wrap-json-response]]
+            [ring.middleware.defaults :refer :all]
             [ring.util.http-response :refer :all]
             [hs-api.patient :refer [patient-valid?]]
             [hs-api.db :as db]))
@@ -12,12 +13,20 @@
 
 (defroutes app-routes
   (context "/api/patients" []
-           (GET "/" [] (ok (map id->str (db/get-all-patients))))
+           (GET "/" {params :query-params}
+                (let [query (get params "query")]
+                  (ok (map id->str (if (some? query)
+                                     (db/search-patients query)
+                                     (db/get-all-patients))))))
            (POST "/" {body :body} (if (patient-valid? body)
                                       (created (db/create-patient body))
                                       (bad-request "Invalid input")))
            (context "/:id" [id]
-                    (GET "/" [] (ok (db/get-patient id)))
+                    (GET "/" []
+                         (let [patient (db/get-patient id)]
+                           (if (some? patient)
+                             (ok patient)
+                             (not-found "Patient not found"))))
                     (PUT "/" {body :body} (if (patient-valid? body)
                                               (ok (db/update-patient id body))
                                               (bad-request "Invalid input")))
@@ -25,6 +34,8 @@
   (route/resources "/")
   (route/not-found "Not Found"))
 
+;; TODO [prone.middleware :refer [wrap-exceptions]]
+;; TODO dev [ring.middleware.reload :refer [wrap-reload]]
 ;; TODO Filtering
 ;; TODO Improve input validation
 ;; TODO Improve error handling
@@ -41,6 +52,7 @@
 (def app
   (->
    app-routes
+   (wrap-defaults site-defaults)
    (wrap-json-request :key-fn keyword)
    wrap-json-response
    wrap-exception))
@@ -49,6 +61,7 @@
 (comment
   (uuid->str {:id 123})
   (app {:request-method :get, :uri "/api/patients"})
+  (app {:request-method :get, :uri "/api/patients", :params {:query "frank"}})
   (app {:request-method :post, :uri "/api/patients", :body {:oms "1234567890123456",
                                                             :name "Frank Cowperwood",
                                                             :gender "M"

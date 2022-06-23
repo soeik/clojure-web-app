@@ -26,10 +26,17 @@ PRIMARY KEY (id)
 
 -- :name get-all-patients
 -- :doc Get all patients
-SELECT name, address, oms, gender
+SELECT id, name, address, oms, gender
 FROM patients
 
+-- :name search-patients
+-- :doc Search patients by name or oms
+SELECT id, name, address, oms, gender
+FROM patients
+WHERE name LIKE :search-query OR oms LIKE :search-query
+
 -- :name get-patient
+-- :result :one
 -- :doc Get a single patient by id
 SELECT name, address, oms, gender
 FROM patients
