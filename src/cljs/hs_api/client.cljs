@@ -1,8 +1,8 @@
 (ns hs-api.client
   (:require [ajax.core :refer [GET POST]]))
 
-(defn search-patients [query handler error-handler]
-  (GET "/api/patients" {:url-params {:query query}
+(defn search-patients [params handler error-handler]
+  (GET "/api/patients" {:url-params (into {} (filter second params))
                         :handler handler
                         :error-handler error-handler
                         :response-format :json

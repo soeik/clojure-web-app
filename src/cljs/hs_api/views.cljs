@@ -14,10 +14,11 @@
         [error set-error] (hooks/use-state nil)]
     (do
       ;; TODO: No loading state when searching
-      (hooks/use-effect [search] (client/search-patients
-                                  (js/search.get "query")
-                                  set-patients
-                                  set-error))
+      (hooks/use-effect [search] (let [query (js/search.get "query")]
+                                   (client/search-patients
+                                    {:query query}
+                                    set-patients
+                                    set-error)))
       (hooks/use-effect [patients, error] (js/console.log patients error) )
       (d/div
        ($ c/patients-header)
