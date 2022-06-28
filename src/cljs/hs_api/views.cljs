@@ -23,7 +23,8 @@
            (cond
              (some? patients) ($ c/patients-table {:patients patients})
              (some? error) ($ c/error-page
-                              {:error (str
+                              {:full-width true
+                               :error (str
                                        "Failed to perform search: "
                                        (:status-text error))})))))))
 
@@ -61,7 +62,8 @@
 
          (some? get-patient-error)
          ($ c/error-page
-            {:error (str (:status get-patient-error) " " (:status-text get-patient-error))})
+            {:title "Failed to load patient"
+             :error (str (:status get-patient-error) " " (:status-text get-patient-error))})
 
          loading
          ($ c/loading-page))))))

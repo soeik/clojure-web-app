@@ -55,10 +55,12 @@
          (d/div {:class-name (styles/utility-page-content)}
           circle-loader-big)))
 
-(defnc error-page [{:keys [error]}]
-  (d/div {:class-name (styles/utility-page false)}
-         (d/h4 "Failed to load patient")
-         (d/hr)
+(defnc error-page [{:keys [title error full-width]}]
+  (d/div {:class-name (styles/utility-page full-width)}
+         (when-not (empty? title)
+           (<>
+            (d/h4 title)
+            (d/hr)))
          (d/div {:class-name (styles/utility-page-content)}
                 (d/h5 error))))
 
@@ -224,16 +226,3 @@
                        :name (patient :name)
                        :oms (patient :oms)
                        :address (patient :address)}))))))
-
-(comment
-  ;; code samples
-  ;; define components using the `defnc` macro
-  (defnc wrapper [{:keys [children]}]
-      ;; (js/console.log "I am wrapper")
-      (d/div {:style {:color "pink"}} "children: " children))
-
-  (defnc greeting
-    "A component which greets a user."
-    [{:keys [name]}]
-    ;; use helix.dom to create DOM elements
-    (d/label "Hello, " (d/strong name) "!")))
