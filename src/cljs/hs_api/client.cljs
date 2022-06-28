@@ -1,5 +1,5 @@
 (ns hs-api.client
-  (:require [ajax.core :refer [GET POST]]))
+  (:require [ajax.core :refer [GET POST PUT]]))
 
 (defn search-patients [params handler error-handler]
   (GET "/api/patients" {:url-params (into {} (filter second params))
