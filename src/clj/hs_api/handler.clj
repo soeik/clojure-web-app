@@ -52,7 +52,7 @@
 (def app
   (->
    app-routes
-   (wrap-defaults site-defaults)
+   (wrap-defaults (assoc-in site-defaults [:security :anti-forgery] false))
    (wrap-json-request :key-fn keyword)
    wrap-json-response
    wrap-exception))
