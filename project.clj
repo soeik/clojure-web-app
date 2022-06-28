@@ -15,10 +15,11 @@
                  [com.layerware/hugsql "0.5.3"]
                  [org.postgresql/postgresql "42.3.1"]
                  [lilactown/helix "0.1.6"]
-                 [cljs-ajax "0.7.5"]]
+                 [cljs-ajax "0.7.5"]
+                 [clj-commons/cljss "1.6.4"]]
 
   :plugins [[lein-ring "0.12.5"]
-            [Lein-cljsbuild "1.1.7"]]
+            [Lein-cljsbuild "1.1.8"]]
 
   :ring {:handler hs-api.handler/app
          :port 9000}
