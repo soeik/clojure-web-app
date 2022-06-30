@@ -23,7 +23,7 @@
                                      (db/get-all-patients))))))
            (POST "/" {body :body} (if (patient-valid? body)
                                     {:status 201
-                                     :body (map id->str (db/create-patient body))}
+                                     :body (id->str (db/create-patient body))}
                                     {:status 400
                                      :body "Invalid input"}))
            (context "/:id" [id]

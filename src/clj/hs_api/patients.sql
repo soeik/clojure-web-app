@@ -43,17 +43,20 @@ FROM patients
 WHERE id::text = :id
 
 -- :name insert-patient :<!
+-- :result :one
 -- :doc Insert a single patient
 insert into patients (name, address, oms, gender)
 values (:name, :address, :oms, :gender)
 returning id
 
 -- :name update-patient :! :n
+-- :result :one
 -- :doc Update a patient
 update patients
 set name = :name, address = :address, oms = :oms
 where id::text = :id
 
 -- :name delete-patient :! :n
+-- :result :one
 -- :doc Delete a patient
 delete from patients where id::text = :id
