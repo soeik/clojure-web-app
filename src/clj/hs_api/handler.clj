@@ -11,18 +11,20 @@
             [hs-api.patient :refer [patient-valid?]]
             [hs-api.db :as db]))
 
-(defn id->str [col]
-  (update col :id str))
+(defn entry->dto [col]
+  (as-> col v
+      (update v :date-of-birth str)
+      (update v :id str)))
 
 (defroutes app-routes
   (context "/api/patients" []
            (GET "/" {params :query-params}
                 (let [query (get params "query")]
-                  (ok (map id->str (if (some? query)
+                  (ok (map entry->dto (if (some? query)
                                      (db/search-patients query)
                                      (db/get-all-patients))))))
            (POST "/" {body :body} (if (patient-valid? body)
-                                    {:status 201 :body (id->str (db/create-patient body))}
+                                    {:status 201 :body (entry->dto (db/create-patient body))}
                                     {:status 400 :body "Invalid input"}))
            (context "/:id" [id]
                     (GET "/" []
@@ -56,7 +58,7 @@
 
 
 (comment
-  (uuid->str {:id 123})
+  (entry->dto {:id 123})
   (created {:foo "bar"})
   (app {:request-method :get, :uri "/api/patients"})
   (app {:request-method :get, :uri "/api/patients", :params {:query "frank"}})

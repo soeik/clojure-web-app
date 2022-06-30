@@ -200,10 +200,14 @@
                                       (set-form-errors errors)))})))))
 
 (defnc patient-row
-  [{:keys [id name oms address]}]
+  [{:keys [id name oms date-of-birth gender address]}]
   (d/tr
    (d/td (d/a {:href (str "#/patients/" id)} name))
    (d/td oms)
+   (d/td date-of-birth)
+   (d/td (case gender
+           "M" "Male"
+           "F" "Female"))
    (d/td address)))
 
 (defnc patients-table [{:keys [patients]}]
@@ -219,6 +223,8 @@
      (d/tr
       (d/th "Name")
       (d/th "OMS")
+      (d/th "Date of birth")
+      (d/th "Gender")
       (d/th "Address")))
     (d/tbody
      (for [patient patients]
@@ -226,4 +232,6 @@
                        :id (patient :id)
                        :name (patient :name)
                        :oms (patient :oms)
+                       :date-of-birth (patient :date-of-birth)
+                       :gender (patient :gender)
                        :address (patient :address)}))))))
