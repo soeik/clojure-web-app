@@ -27,8 +27,7 @@
                                :error (str
                                        "Failed to perform search: "
                                        (:status-text error))})))))))
-
-;; TODO Handle success -> notify, navigate to the created entry, or clear the form
+;; TODO back to list link
 (defnc new-patient []
   (let [[create-patient in-progress result error] (use-request client/create-patient)
         error-message (if (some? error) (str "Failed to create patient: " (:status-text error)) nil)
@@ -43,12 +42,12 @@
                :success success-message
                :on-submit create-patient}))))
 
-;; TODO Handle succes -> notify
+;; FIXME Update fails
 (defnc edit-patient []
   (let [params (router/useParams)
         id (gobj/get params "id")
         [get-patient loading patient get-patient-error] (use-request client/get-patient-by-id)
-        [update-patient updating result update-patient-error] (use-request client/update-patient)
+        [update-patient updating result update-patient-error] (use-request (partial client/update-patient id))
         error-message (if (some? update-patient-error)
                         (str "Failed to update patient: " (:status-text update-patient-error))
                         nil)
@@ -67,7 +66,7 @@
               :in-progress updating
               :error error-message
               :success success-message
-              :on-submit (partial update-patient id)}))
+              :on-submit update-patient}))
 
          (some? get-patient-error)
          ($ c/error-page
