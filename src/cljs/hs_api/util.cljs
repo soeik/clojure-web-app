@@ -11,6 +11,8 @@
                           (set-error %))]
     [(fn [args]
        (do
+         (set-error nil)
+         (set-result nil)
          (set-in-progress true)
          (apply request-fn (conj [] args handle-success handle-error))))
      in-progress

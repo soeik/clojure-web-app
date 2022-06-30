@@ -45,8 +45,10 @@
                    :gender "M"})
   (get-all-patients)
   (get-patient "b1393a03-8453-4f65-8b58-fd5631e66d66")
-  (update-patient {:id "b1393a03-8453-4f65-8b58-fd5631e66d66",
+  (update-patient "86f6e38b-fa0a-40b8-bce5-903df0fb97d4"
+                  {:id "b1393a03-8453-4f65-8b58-fd5631e66d66",
                    :name "Donald Trumpet",
                    :address "Philadelphia ave."
-                   :oms 5646576767 })
+                   :gender "M"
+                   :oms "5646576767" })
   (get-patient "unkown"))

@@ -53,7 +53,7 @@ returning id
 -- :result :one
 -- :doc Update a patient
 update patients
-set name = :name, address = :address, oms = :oms
+set name = :name, address = :address, oms = :oms, gender = :gender
 where id::text = :id
 
 -- :name delete-patient :! :n

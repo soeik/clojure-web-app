@@ -42,15 +42,14 @@
                :success success-message
                :on-submit create-patient}))))
 
-;; FIXME Update fails
+;; TODO Cancel button? Is it needed?
 (defnc edit-patient []
   (let [params (router/useParams)
         id (gobj/get params "id")
         [get-patient loading patient get-patient-error] (use-request client/get-patient-by-id)
         [update-patient updating result update-patient-error] (use-request (partial client/update-patient id))
         error-message (if (some? update-patient-error)
-                        (str "Failed to update patient: " (:status-text update-patient-error))
-                        nil)
+                        (str "Failed to update patient: " (:status-text update-patient-error)) nil)
         success-message (if (some? result) "Patient successfully updated" nil)]
     (do
       (hooks/use-effect [] (get-patient id))

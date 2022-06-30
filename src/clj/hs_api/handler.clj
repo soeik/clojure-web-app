@@ -22,10 +22,8 @@
                                      (db/search-patients query)
                                      (db/get-all-patients))))))
            (POST "/" {body :body} (if (patient-valid? body)
-                                    {:status 201
-                                     :body (id->str (db/create-patient body))}
-                                    {:status 400
-                                     :body "Invalid input"}))
+                                    {:status 201 :body (id->str (db/create-patient body))}
+                                    {:status 400 :body "Invalid input"}))
            (context "/:id" [id]
                     (GET "/" []
                          (let [patient (db/get-patient id)]
@@ -33,10 +31,11 @@
                              (ok patient)
                              (not-found "Patient not found"))))
                     (PUT "/" {body :body} (if (patient-valid? body)
-                                            {:status 200
-                                             :body (map id->str (db/update-patient id body))}
-                                            {:status 400
-                                             :body "Invalid input"}))
+                                            (let [affected-rows (db/update-patient id body)]
+                                              (if (= affected-rows 1)
+                                                {:status 200 :body {:id id}}
+                                                {:status 400 :body "Failed to update patient"}))
+                                            {:status 400 :body "Invalid input"}))
                     (DELETE "/" [] (ok (db/delete-patient id)))))
   (route/resources "/")
   (route/not-found "Not Found"))
@@ -65,11 +64,18 @@
                                                             :name "Frank Cowperwood",
                                                             :gender "M"
                                                             :address "Sundgauerstr. 123" }})
+  (update-patient "86f6e38b-fa0a-40b8-bce5-903df0fb97d4"
+                  {:id "b1393a03-8453-4f65-8b58-fd5631e66d66",
+                   :name "Donald Trumpet",
+                   :address "Philadelphia ave."
+                   :gender "M"
+                   :oms "5646576767" })
   (app {:request-method :put,
-        :uri "/api/patients/b1393a03-8453-4f65-8b58-fd5631e66d66",
+        :uri "/api/patients/86f6e38b-fa0a-40b8-bce5-903df0fb97d4",
         :body {:name "Donald Trumpet",
-               :address "Philadelphia avenue 171",
-               :oms     5646576767 }})
+               :address "Philadelphia ave."
+               :gender "M"
+               :oms "1234567890123456"}})
   (app {:request-method :get, :uri "/api/patients/non-existings"})
   (app {:request-method :get, :uri "/api/patients/b1393a03-8453-4f65-8b58-fd5631e66d66"})
   (app {:request-method :delete, :uri "/api/patients/57c181d4-63f0-423a-8f57-96528b8a0695"}))
