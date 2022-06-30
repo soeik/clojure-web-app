@@ -31,13 +31,16 @@
 ;; TODO Handle success -> notify, navigate to the created entry, or clear the form
 (defnc new-patient []
   (let [[create-patient in-progress result error] (use-request client/create-patient)
-        error-text (if (some? error) (str "Failed to create patient: " (:status-text error)) nil)]
+        error-message (if (some? error) (str "Failed to create patient: " (:status-text error)) nil)
+        success-message (if (some? result) "Patient successfully created" nil)]
     (d/div {:class-name (styles/page-content)}
            (d/h4 "New patient")
            (d/hr)
            ($ c/patient-form
-              {:in-progress in-progress
-               :error error-text
+              {:key (:id result)
+               :in-progress in-progress
+               :error error-message
+               :success success-message
                :on-submit create-patient}))))
 
 ;; TODO Handle succes -> notify
@@ -45,7 +48,11 @@
   (let [params (router/useParams)
         id (gobj/get params "id")
         [get-patient loading patient get-patient-error] (use-request client/get-patient-by-id)
-        [update-patient updating result update-patient-error] (use-request client/update-patient)]
+        [update-patient updating result update-patient-error] (use-request client/update-patient)
+        error-message (if (some? update-patient-error)
+                        (str "Failed to update patient: " (:status-text update-patient-error))
+                        nil)
+        success-message (if (some? result) "Patient successfully updated" nil)]
     (do
       (hooks/use-effect [] (get-patient id))
       (d/div {:class-name (styles/page-content)}
@@ -55,9 +62,11 @@
           (d/h4 (:name patient))
           (d/hr)
           ($ c/patient-form
-             {:patient patient
+             {:key id
+              :patient patient
               :in-progress updating
-              :error update-patient-error
+              :error error-message
+              :success success-message
               :on-submit (partial update-patient id)}))
 
          (some? get-patient-error)

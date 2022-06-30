@@ -6,7 +6,9 @@
 (def colors
   {:primary "#fc3724"
    :text-default "#353b50"
-   :text-light "#6d6d6d"})
+   :text-light "#6d6d6d"
+   :success "#009b00"
+   :error "firebrick"})
 
 (defstyles circle-loader [variant]
   {:fill "transparent"
@@ -110,13 +112,19 @@
 
 (defstyles form-error []
   {:padding "6px 10px"
-   ;; :margin-bottom "5px"
-   :border "1px solid firebrick"
+   :border (str "1px solid " (colors :error))
    :border-radius "4px"
-   :color "firebrick"
-   ;; :background-color "#ffe2e0"
+   :color (colors :error)
    :text-align "center"
    })
+(defstyles form-success []
+  {:padding "6px 10px"
+   :border (str "1px solid " (colors :success))
+   :border-radius "4px"
+   :color (colors :success)
+   :text-align "center"
+   })
+
 
 (defstyles field-error []
   {:margin-top "6px"

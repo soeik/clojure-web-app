@@ -147,7 +147,7 @@
                     :address ""
                     :oms ""})
 
-(defnc patient-form [{:keys [on-submit patient in-progress error]}]
+(defnc patient-form [{:keys [on-submit patient in-progress error success]}]
   (let [[form set-form] (hooks/use-state (or patient empty-patient))
         [form-errors set-form-errors] (hooks/use-state nil)
         field-error (fn [key]
@@ -155,48 +155,49 @@
                         (d/div {:class-name (styles/field-error)} msg)
                         nil))]
     (d/form {:class-name (styles/form)}
-     (d/div {:class-name (styles/form-row)}
-            (d/div {:class-name (styles/form-group)}
-                   (d/label {:for "name"} "Name")
-                   ($ name-input {:value (:name form)
-                                  :valid (nil? (:name form-errors))
-                                  :on-change #(set-form assoc :name (.. % -target -value))})
-                   (field-error :name)))
-     (d/div {:class-name (styles/form-row)}
-            (d/div {:class-name (styles/form-group)}
-                   (d/label {:for "gender"} "Gender")
-                   ($ gender-input {:value (:gender form)
-                                    :valid (nil? (:gender form-errors))
-                                    :on-change #(set-form assoc :gender (.. % -target -value))})
-                   (field-error :gender))
-            (d/div {:class-name (styles/form-group)}
-                   (d/label {:for "date-of-birth"} "Date of birth")
-                   ($ date-of-birth-input {:value (:date-of-birth form)
-                                           :valid (nil? (:date-of-birth form-errors))
-                                           :on-change #(set-form assoc :date-of-birth (.. % -target -value))})
-                   (field-error :date-of-birth)))
-     (d/div {:class-name (styles/form-row)}
-            (d/div {:class-name (styles/form-group)}
-                   (d/label {:for "address"} "Address")
-                   ($ address-input {:value (:address form)
-                                     :on-change #(set-form assoc :address (.. % -target -value))}))
-            (d/div {:class-name (styles/form-group)}
-                   (d/label {:for "oms"} "OMS")
-                   ($ oms-input {:value (:oms form)
-                                 :valid (nil? (:oms form-errors))
-                                 :on-change #(set-form assoc :oms (.. % -target -value))})
-                   (field-error :oms)))
-     (when error (d/div {:class-name (styles/form-error)} error))
-     (d/div {:class-name (styles/form-actions)}
-            ($ router/Link {:to "/patients"}
-               (d/button "Cancel"))
-            ($ progress-button
-               {:text "Save"
-                :in-progress in-progress
-                :on-click #(let [errors (validate-patient form)]
-                             (if (empty? errors)
-                             (on-submit form)
-                             (set-form-errors errors)))})))))
+            (d/div {:class-name (styles/form-row)}
+                   (d/div {:class-name (styles/form-group)}
+                          (d/label {:for "name"} "Name")
+                          ($ name-input {:value (:name form)
+                                         :valid (nil? (:name form-errors))
+                                         :on-change #(set-form assoc :name (.. % -target -value))})
+                          (field-error :name)))
+            (d/div {:class-name (styles/form-row)}
+                   (d/div {:class-name (styles/form-group)}
+                          (d/label {:for "gender"} "Gender")
+                          ($ gender-input {:value (:gender form)
+                                           :valid (nil? (:gender form-errors))
+                                           :on-change #(set-form assoc :gender (.. % -target -value))})
+                          (field-error :gender))
+                   (d/div {:class-name (styles/form-group)}
+                          (d/label {:for "date-of-birth"} "Date of birth")
+                          ($ date-of-birth-input {:value (:date-of-birth form)
+                                                  :valid (nil? (:date-of-birth form-errors))
+                                                  :on-change #(set-form assoc :date-of-birth (.. % -target -value))})
+                          (field-error :date-of-birth)))
+            (d/div {:class-name (styles/form-row)}
+                   (d/div {:class-name (styles/form-group)}
+                          (d/label {:for "address"} "Address")
+                          ($ address-input {:value (:address form)
+                                            :on-change #(set-form assoc :address (.. % -target -value))}))
+                   (d/div {:class-name (styles/form-group)}
+                          (d/label {:for "oms"} "OMS")
+                          ($ oms-input {:value (:oms form)
+                                        :valid (nil? (:oms form-errors))
+                                        :on-change #(set-form assoc :oms (.. % -target -value))})
+                          (field-error :oms)))
+            (when error (d/div {:class-name (styles/form-error)} error))
+            (when success (d/div {:class-name (styles/form-success)} success))
+            (d/div {:class-name (styles/form-actions)}
+                   ($ router/Link {:to "/patients"}
+                      (d/button "Cancel"))
+                   ($ progress-button
+                      {:text "Save"
+                       :in-progress in-progress
+                       :on-click #(let [errors (validate-patient form)]
+                                    (if (empty? errors)
+                                      (on-submit form)
+                                      (set-form-errors errors)))})))))
 
 (defnc patient-row
   [{:keys [id name oms address]}]
