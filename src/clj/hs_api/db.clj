@@ -50,5 +50,6 @@
                    :name "Donald Trumpet",
                    :address "Philadelphia ave."
                    :gender "M"
-                   :oms "5646576767" })
+                   :oms "5646576767"
+                   :date-of-birth "2016-06-20"})
   (get-patient "unkown"))

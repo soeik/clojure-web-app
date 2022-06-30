@@ -30,7 +30,7 @@
                     (GET "/" []
                          (let [patient (db/get-patient id)]
                            (if (some? patient)
-                             (ok patient)
+                             (ok (entry->dto patient))
                              (not-found "Patient not found"))))
                     (PUT "/" {body :body} (if (patient-valid? body)
                                             (let [affected-rows (db/update-patient id body)]
