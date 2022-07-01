@@ -1,5 +1,5 @@
 (ns hs-api.client
-  (:require [ajax.core :refer [GET POST PUT]]))
+  (:require [ajax.core :refer [GET POST PUT DELETE]]))
 
 (defn search-patients [params handler error-handler]
   (GET "/api/patients" {:url-params (into {} (filter second params))
@@ -29,3 +29,9 @@
                                   :format :json
                                   :response-format :json
                                   :keywords? true}))
+
+(defn delete-patient [id handler error-handler]
+  (DELETE (str "/api/patients/" id) {:handler handler
+                                     :error-handler error-handler
+                                     :response-format :json
+                                     :keywords? true}))
