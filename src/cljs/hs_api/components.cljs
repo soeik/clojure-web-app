@@ -86,7 +86,7 @@
              :name "gender"
              :value value
              :on-change on-change}
-            (d/option {:disabled true} "")
+            (d/option {:value ""} "")
             (d/option {:value "M"} "Male")
             (d/option {:value "F"} "Female")))
 
@@ -113,32 +113,41 @@
             :value value
             :on-change on-change}))
 
+;; TODO Reset doesn't work on date
 (defnc patients-filter []
   (let [[search set-search] (router/useSearchParams)
-        [query set-query] (hooks/use-state (or (js/search.get "query") ""))]
+        [filter set-filter] (hooks/use-state {:query (or (js/search.get "query") "")
+                                              :gender (or (js/search.get "gender") "")
+                                              :date-of-birth (or (js/search.get "date-of-birth") "")})
+        remove-empty-values (fn [filter] (apply dissoc
+                                               filter
+                                               (for [[k v] filter :when (empty? v)] k)))]
     (d/div {:class (styles/filters)}
-           ;; TODO Reset filetr
-           ;; TODO Remaining fields
-           ;; TODO Search on key down?
            ($ search-input
-              {:value query
-               :on-change #(set-query (.. % -target -value))})
+              {:value (:query filter)
+               :on-change #(set-filter
+                            (assoc filter :query (.. % -target -value)))})
            (d/div
             (d/label
              {:class-name (styles/filter-label)}
              "Gender")
             ($ gender-input
-               {:value "M"
-                :on-change js/console.log}))
+               {:value (:gender filter)
+                :on-change #(set-filter
+                             (assoc filter :gender (.. % -target -value)))}))
            (d/div
             (d/label
              {:class-name (styles/filter-label)}
              "Date of birth")
             ($ date-of-birth-input
-               {:value nil
-                :on-change js/console.log}))
+               {:value (:date-of-birth filter)
+                :on-change #(set-filter
+                             (assoc filter :date-of-birth (.. % -target -value)))}))
            (d/button {:class-name "button"
-                      :on-click #(set-search #js {"query" query})} "Search"))))
+                      :on-click #(set-search (clj->js (remove-empty-values filter)))} "Search")
+           (d/button {:class-name "button"
+                      :on-click #(do (set-filter {})
+                                     (set-search #js {}))} "Reset filters"))))
 
 ;; TODO Move somewhere else?
 (def empty-patient {:name ""

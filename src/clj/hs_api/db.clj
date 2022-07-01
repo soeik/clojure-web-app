@@ -20,12 +20,10 @@
 (defn update-patient [id patient]
   (query/update-patient db (assoc patient :id id)))
 
-;; Get all patients
-(defn get-all-patients []
-  (query/get-all-patients db))
-
-(defn search-patients [search-query]
-  (query/search-patients db {:search-query (str "%" search-query "%")}))
+(defn search-patients [search-query gender date-of-birth]
+  (query/search-patients db {:search-query (str "%" search-query "%")
+                             :gender gender
+                             :date-of-birth date-of-birth}))
 
 ;; Get a single patient by id
 (defn get-patient [id]
@@ -37,7 +35,10 @@
 
 
 (comment
-  (search-patients "Frank")
+  (search-patients nil nil nil)
+  (search-patients nil "F" nil)
+  (search-patients "098" "F" nil)
+  (query/search-patients-sqlvec db {:search-query "TEST"})
   (create-patient {:name "Frank Cowperwood"
                    :date-of-birth "1989-05-05"
                    :address "Berlinerstrasse 124, Berlin, Germany"

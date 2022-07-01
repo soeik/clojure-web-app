@@ -13,10 +13,12 @@
 
 (defnc list-patients []
   (let [[search] (router/useSearchParams)
-        [search-patients searching patients error] (use-request client/search-patients)]
+        [search-patients searching patients error] (use-request client/search-patients)
+        query (js/search.get "query")
+        gender (js/search.get "gender")
+        date-of-birth (js/search.get "date-of-birth")]
     (do
-      (hooks/use-effect [search] (let [query (js/search.get "query")]
-                                   (search-patients {:query query})))
+      (hooks/use-effect [search] (search-patients {:query query :gender gender :date-of-birth date-of-birth}))
       (d/div {:class-name (styles/search-page)}
        ($ c/patients-filter)
        (if searching ($ c/loading-page)

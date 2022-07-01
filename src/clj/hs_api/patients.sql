@@ -24,16 +24,14 @@ date_of_birth date,
 PRIMARY KEY (id)
 )
 
--- :name get-all-patients
--- :doc Get all patients
-SELECT id, name, address, oms, gender, date_of_birth "date-of-birth"
-FROM patients
-
 -- :name search-patients
 -- :doc Search patients by name or oms
 SELECT id, name, address, oms, gender, date_of_birth "date-of-birth"
 FROM patients
-WHERE name LIKE :search-query OR oms LIKE :search-query
+WHERE (coalesce(:search-query, '') = ''
+      OR (name LIKE :search-query OR oms LIKE :search-query))
+AND (coalesce(:gender, '') = '' OR  gender = :gender)
+AND (coalesce(:date-of-birth, '') = '' OR  date_of_birth = :date-of-birth)
 
 -- :name get-patient
 -- :result :one

@@ -19,10 +19,11 @@
 (defroutes app-routes
   (context "/api/patients" []
            (GET "/" {params :query-params}
-                (let [query (get params "query")]
-                  (ok (map entry->dto (if (some? query)
-                                     (db/search-patients query)
-                                     (db/get-all-patients))))))
+                (let [query (get params "query")
+                      gender (get params "gender")
+                      date-of-birth (get params "date-of-birth")]
+                  (ok (map entry->dto
+                           (db/search-patients query gender date-of-birth)))))
            (POST "/" {body :body} (if (patient-valid? body)
                                     {:status 201 :body (entry->dto (db/create-patient body))}
                                     {:status 400 :body "Invalid input"}))
@@ -43,7 +44,6 @@
   (route/not-found "Not Found"))
 
 ;; TODO dev [ring.middleware.reload :refer [wrap-reload]]
-;; TODO Filtering
 ;; TODO Improve input validation
 ;; TODO Improve error handling
 ;; TODO Tests
@@ -59,7 +59,6 @@
 
 (comment
   (entry->dto {:id 123})
-  (created {:foo "bar"})
   (app {:request-method :get, :uri "/api/patients"})
   (app {:request-method :get, :uri "/api/patients", :params {:query "frank"}})
   (app {:request-method :post, :uri "/api/patients", :body {:oms "1234567890123456",
