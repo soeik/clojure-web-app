@@ -7,6 +7,7 @@
   {:primary "#fc3724"
    :text-default "#353b50"
    :text-light "#6d6d6d"
+   :grey-light "#d1d1d1"
    :success "#009b00"
    :error "firebrick"})
 
@@ -36,6 +37,13 @@
    :display "flex"
    :justify-content "center"
    :padding "0 10px"})
+
+(defstyles page-title []
+  {:display "flex"
+   :align-items "center"
+   :justify-content "space-between"
+   :border-bottom (str "1px solid " (colors :grey-light))
+   :margin-bottom "40px"})
 
 (defstyles page-content []
   {:width "800px"
@@ -97,8 +105,8 @@
 
 (defstyles form-actions []
   {:display "flex"
-   :justify-content "flex-end"
-   :gap "10px"
+   :justify-content "space-between"
+   :margin-top "20px"
    "button" {:width "150px"}})
 
 (defstyles form-row []
@@ -117,6 +125,7 @@
    :color (colors :error)
    :text-align "center"
    })
+
 (defstyles form-success []
   {:padding "6px 10px"
    :border (str "1px solid " (colors :success))
@@ -125,8 +134,31 @@
    :text-align "center"
    })
 
-
 (defstyles field-error []
   {:margin-top "6px"
    :font-size "12px"
    :color "red"})
+
+(defstyles icon-button []
+  {:padding "10px 0"
+   :border "none"
+   :opacity "0.5"
+   :transition "opacity .15s ease-in-out"
+   :&:hover {:opacity "1"}})
+
+(def icons {:pencil "images/icon-pencil.png"
+            :bin "images/icon-bin.png"})
+
+(defstyles icon [icon]
+  {:display "block"
+   :width "20px"
+   :height "20px"
+   :background-image (str "url(\"" (icons icon) "\")")
+   :background-repeat "no-repeat"})
+
+(defstyles icon-delete []
+  {:display "block"
+   :width "20px"
+   :height "20px"
+   :background-image "url('images/icon-bin.png')"
+   :background-repeat "no-repeat"})
