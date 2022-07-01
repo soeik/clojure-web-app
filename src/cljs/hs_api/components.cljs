@@ -72,45 +72,50 @@
             ;; TODO: On keyDown enter
             :on-change on-change}))
 
-(defnc name-input [{:keys [value on-change valid]}]
+(defnc name-input [{:keys [value on-change valid disabled]}]
   (d/input {:id "name"
             :class-name (if-not valid "invalid" nil)
             :name "name"
             :type "text"
             :value value
+            :disabled disabled
             :on-change on-change}))
 
-(defnc gender-input [{:keys [value on-change valid]}]
+(defnc gender-input [{:keys [value on-change valid disabled]}]
   (d/select {:id "gender"
              :class-name (if-not valid "invalid" nil)
              :name "gender"
              :value value
+             :disabled disabled
              :on-change on-change}
             (d/option {:value ""} "")
             (d/option {:value "M"} "Male")
             (d/option {:value "F"} "Female")))
 
-(defnc date-of-birth-input [{:keys [value on-change valid]}]
+(defnc date-of-birth-input [{:keys [value on-change valid disabled]}]
   (d/input {:id "date-of-birth"
-            :class-name (if-not valid "invalid" nil)
-            :name "date-of-birth"
-            :type "date"
-            :value value
+              :class-name (if-not valid "invalid" nil)
+              :name "date-of-birth"
+              :type "date"
+              :value value
+              :disabled disabled
             :on-change on-change}))
 
-(defnc address-input [{:keys [value on-change]}]
+(defnc address-input [{:keys [value on-change disabled]}]
   (d/input {:id "address"
             :name "address"
             :type "text"
             :value value
+            :disabled disabled
             :on-change on-change}))
 
-(defnc oms-input [{:keys [value on-change valid]}]
+(defnc oms-input [{:keys [value on-change valid disabled]}]
   (d/input {:id "oms"
             :class-name (if-not valid "invalid" nil)
             :name "oms"
             :type "text"
             :value value
+            :disabled disabled
             :on-change on-change}))
 
 (def empty-filter {:query ""
@@ -159,7 +164,7 @@
                     :address ""
                     :oms ""})
 
-(defnc patient-form [{:keys [on-submit patient in-progress error success]}]
+(defnc patient-form [{:keys [on-submit patient in-progress editing error success]}]
   (let [[form set-form] (hooks/use-state (or patient empty-patient))
         [form-errors set-form-errors] (hooks/use-state nil)
         field-error (fn [key]
@@ -172,6 +177,7 @@
                           (d/label {:for "name"} "Name")
                           ($ name-input {:value (:name form)
                                          :valid (nil? (:name form-errors))
+                                         :disabled in-progress
                                          :on-change #(set-form assoc :name (.. % -target -value))})
                           (field-error :name)))
             (d/div {:class-name (styles/form-row)}
@@ -179,30 +185,35 @@
                           (d/label {:for "gender"} "Gender")
                           ($ gender-input {:value (:gender form)
                                            :valid (nil? (:gender form-errors))
+                                           :disabled in-progress
                                            :on-change #(set-form assoc :gender (.. % -target -value))})
                           (field-error :gender))
                    (d/div {:class-name (styles/form-group)}
                           (d/label {:for "date-of-birth"} "Date of birth")
                           ($ date-of-birth-input {:value (:date-of-birth form)
                                                   :valid (nil? (:date-of-birth form-errors))
+                                                  :disabled in-progress
                                                   :on-change #(set-form assoc :date-of-birth (.. % -target -value))})
                           (field-error :date-of-birth)))
             (d/div {:class-name (styles/form-row)}
                    (d/div {:class-name (styles/form-group)}
                           (d/label {:for "address"} "Address")
                           ($ address-input {:value (:address form)
+                                            :disabled in-progress
                                             :on-change #(set-form assoc :address (.. % -target -value))}))
                    (d/div {:class-name (styles/form-group)}
                           (d/label {:for "oms"} "OMS")
                           ($ oms-input {:value (:oms form)
                                         :valid (nil? (:oms form-errors))
+                                        :disabled in-progress
                                         :on-change #(set-form assoc :oms (.. % -target -value))})
                           (field-error :oms)))
             (when error (d/div {:class-name (styles/form-error)} error))
             (when success (d/div {:class-name (styles/form-success)} success))
             (d/div {:class-name (styles/form-actions)}
-                   ($ router/Link {:to "/patients"}
-                      (d/button "Cancel"))
+                   ($ router/Link
+                      {:to "/patients"}
+                      (d/button {:class-name "button"} "Back"))
                    ($ progress-button
                       {:text "Save"
                        :in-progress in-progress
