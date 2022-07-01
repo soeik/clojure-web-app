@@ -273,6 +273,18 @@ textarea:focus,
 select:focus {
   border: 1px solid #ffa59c;
   outline: 0; }
+input[type="email"]:disabled,
+input[type="number"]:disabled,
+input[type="search"]:disabled,
+input[type="text"]:disabled,
+input[type="tel"]:disabled,
+input[type="url"]:disabled,
+input[type="password"]:disabled,
+input[type="date"]:disabled,
+textarea:disabled,
+select:disabled > option {
+  color: #6d6d6d;
+}
 label,
 legend {
   display: block;
