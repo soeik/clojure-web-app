@@ -151,11 +151,13 @@
                {:value (:date-of-birth filter)
                 :on-change #(set-filter
                              (assoc filter :date-of-birth (.. % -target -value)))}))
-           (d/button {:class-name "button"
-                      :on-click #(set-search (clj->js (remove-empty-values filter)))} "Search")
-           (d/button {:class-name "button"
-                      :on-click #(do (set-filter empty-filter)
-                                     (set-search #js {}))} "Reset filters"))))
+           (d/div
+            {:class-name (styles/filter-actions)}
+            (d/button {:class-name "button button-primary"
+                       :on-click #(set-search (clj->js (remove-empty-values filter)))} "Search")
+            (d/button {:class-name "button"
+                       :on-click #(do (set-filter empty-filter)
+                                      (set-search #js {}))} "Reset")))))
 
 ;; TODO Move somewhere else?
 (def empty-patient {:name ""

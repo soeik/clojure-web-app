@@ -84,6 +84,12 @@
    :width "250px"
    "*" {:width "100%"}})
 
+(defstyles filter-actions []
+  {:margin-top "20px"
+   :display "flex"
+   :flex-direction "column"
+   :gap "10px"})
+
 (defstyles filter-label []
   {:color (:text-light colors)
    :font-size "12px"})
