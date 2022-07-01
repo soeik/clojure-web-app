@@ -13,6 +13,7 @@
                  [compojure "1.6.1"]
                  [com.layerware/hugsql "0.5.3"]
                  [org.postgresql/postgresql "42.3.1"]
+                 [com.widdindustries/cljc.java-time "0.1.21"]
                  [lilactown/helix "0.1.6"]
                  [cljs-ajax "0.7.5"]
                  [clj-commons/cljss "1.6.4"]]

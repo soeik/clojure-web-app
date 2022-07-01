@@ -1,26 +1,31 @@
-(ns hs-api.validation)
-
-;; TODO
-;; Единый номер полиса ОМС представляет собой шестнадцатиразрядное число,
-;; последний символ которого (K) является контрольным разрядом номера полиса ОМС:
-
-;; - К – контрольный разряд номера полиса ОМС, вычисляется арифметически
-;; в соответствии с методикой расчета, описанной в международном стандарте
-;; ISO/HL7 27931:2009 (алгоритм Mod10):
-
-;; а) выбираются нечетные цифры по порядку, начиная справа, в виде числа,
-;; и умножается это число на 2.
-
-;; б) выбираются четные цифры по порядку, начиная справа, в виде числа,
-;; и результат приписывается слева от числа, полученного в пункте а).
-
-;; в) складываются все цифры полученного в пункте б) числа.
-
-;; г) полученное в пункте в) число вычитается из ближайшего большего или равного
-;; числа, кратного 10. В результате получается искомая контрольная цифра.
+(ns hs-api.validation
+  (:require [cljc.java-time.local-date :as ld]
+            [cljc.java-time.format.date-time-formatter :as formatter]))
 
 (defn oms-valid?
   ([] false)
   ([oms] (and
           (string? oms)
           (= (count oms) 16))))
+
+(def date-format (formatter/of-pattern "yyyy-MM-dd"))
+
+(defn date-of-birth-valid?
+  [date]
+  (try (ld/parse date date-format) true
+       (catch #?(:clj Exception :cljs js/Error) e false)))
+
+(defn date-of-birth-in-past?
+  [date]
+  (try (.isBefore
+        (ld/parse date date-format)
+        (ld/now))
+       (catch #?(:clj Exception :cljs js/Error) e false)))
+
+
+(comment
+  (.isBefore
+   (ld/parse "2032-05-05" date-format)
+   (ld/now))
+  (date-of-birth-valid? "2022-05-05")
+  )
