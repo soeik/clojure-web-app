@@ -43,9 +43,9 @@
   (route/resources "/")
   (route/not-found "Not Found"))
 
-;; TODO Validate date of birth
-;; TODO Delete entry
+;; TODO Search by name case insensitive
 ;; TODO Tests
+;; TODO Date in this century
 
 (def app
   (->
