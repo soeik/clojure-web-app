@@ -29,14 +29,14 @@
                                :error (str
                                        "Failed to perform search: "
                                        (:status-text error))})))))))
-;; TODO back to list link
+
 (defnc new-patient []
   (let [[create-patient in-progress result error] (use-request client/create-patient)
         error-message (if (some? error) (str "Failed to create patient: " (:status-text error)) nil)
         success-message (if (some? result) "Patient successfully created" nil)]
     (d/div {:class-name (styles/page-content)}
-           (d/h4 "New patient")
-           (d/hr)
+           (d/div {:class-name (styles/page-title)}
+                  (d/h4 "New patient"))
            ($ c/patient-form
               {:key (:id result)
                :in-progress in-progress
@@ -44,35 +44,42 @@
                :success success-message
                :on-submit create-patient}))))
 
-;; TODO Cancel button? Is it needed?
 (defnc edit-patient []
   (let [params (router/useParams)
         id (gobj/get params "id")
+        navigate (router/useNavigate)
         [get-patient loading patient get-patient-error] (use-request client/get-patient-by-id)
-        [update-patient updating result update-patient-error] (use-request (partial client/update-patient id))
-        error-message (if (some? update-patient-error)
-                        (str "Failed to update patient: " (:status-text update-patient-error)) nil)
-        success-message (if (some? result) "Patient successfully updated" nil)]
+        [delete-patient deleting deleted delete-patient-error] (use-request (partial client/delete-patient id))
+        [update-patient updating updated update-patient-error] (use-request (partial client/update-patient id))
+        error-message (cond
+                        (some? update-patient-error)
+                        (str "Failed to update patient: " (:status-text update-patient-error))
+                        (some? delete-patient-error)
+                        (str "Failed to delete patient: " (:status-text delete-patient-error)))
+        success-message (if (some? updated) "Patient successfully updated" nil)]
     (do
       (hooks/use-effect [] (get-patient id))
       (d/div {:class-name (styles/page-content)}
-       (cond
-         (some? patient)
-         (d/div
-          (d/h4 (:name patient))
-          (d/hr)
-          ($ c/patient-form
-             {:key id
-              :patient patient
-              :in-progress updating
-              :error error-message
-              :success success-message
-              :on-submit update-patient}))
-
-         (some? get-patient-error)
-         ($ c/error-page
-            {:title "Failed to load patient"
-             :error (str (:status get-patient-error) " " (:status-text get-patient-error))})
-
-         loading
-         ($ c/loading-page))))))
+             (cond
+               (some? patient)
+               (d/div
+                (d/div
+                 {:class-name (styles/page-title)}
+                 (d/h4 (:name patient))
+                 (d/button
+                  {:class-name (styles/icon-button)
+                   :on-click (fn [] (delete-patient #(navigate "/patients")))}
+                  (d/i {:class-name (styles/icon :bin)})))
+                ($ c/patient-form
+                   {:key id
+                    :patient patient
+                    :in-progress updating
+                    :error error-message
+                    :success success-message
+                    :on-submit update-patient}))
+               (some? get-patient-error)
+               ($ c/error-page
+                  {:title "Failed to load patient"
+                   :error (str (:status get-patient-error) " " (:status-text get-patient-error))})
+               loading
+               ($ c/loading-page))))))
