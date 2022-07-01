@@ -113,7 +113,10 @@
             :value value
             :on-change on-change}))
 
-;; TODO Reset doesn't work on date
+(def empty-filter {:query ""
+                   :gender ""
+                   :date-of-birth ""})
+
 (defnc patients-filter []
   (let [[search set-search] (router/useSearchParams)
         [filter set-filter] (hooks/use-state {:query (or (js/search.get "query") "")
@@ -146,7 +149,7 @@
            (d/button {:class-name "button"
                       :on-click #(set-search (clj->js (remove-empty-values filter)))} "Search")
            (d/button {:class-name "button"
-                      :on-click #(do (set-filter {})
+                      :on-click #(do (set-filter empty-filter)
                                      (set-search #js {}))} "Reset filters"))))
 
 ;; TODO Move somewhere else?
