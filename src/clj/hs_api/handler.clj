@@ -1,13 +1,8 @@
 (ns hs-api.handler
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
-            [ring.middleware.data.json :refer [wrap-json-request
-                                               wrap-json-response]]
-            [ring.middleware.defaults :refer [wrap-defaults
-                                              site-defaults]]
-            [ring.util.http-response :refer [ok
-                                             bad-request
-                                             not-found]]
+            [ring.middleware.data.json :refer [wrap-json-request wrap-json-response]]
+            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [hs-api.patient :refer [patient-valid?]]
             [hs-api.db :as db]))
 
@@ -21,9 +16,9 @@
            (GET "/" {params :query-params}
                 (let [query (get params "query")
                       gender (get params "gender")
-                      date-of-birth (get params "date-of-birth")]
-                  (ok (map entry->dto
-                           (db/search-patients query gender date-of-birth)))))
+                      date-of-birth (get params "date-of-birth")
+                      results (db/search-patients query gender date-of-birth)]
+                  {:status 200 :body (map entry->dto results)}))
            (POST "/" {body :body} (if (patient-valid? body)
                                     {:status 201 :body (entry->dto (db/create-patient body))}
                                     {:status 400 :body "Invalid input"}))
@@ -31,23 +26,21 @@
                     (GET "/" []
                          (let [patient (db/get-patient id)]
                            (if (some? patient)
-                             (ok (entry->dto patient))
-                             (not-found "Patient not found"))))
+                             {:status 200 :body (entry->dto patient)}
+                             {:status 404 :body "Patient not found"})))
                     (PUT "/" {body :body} (if (patient-valid? body)
                                             (let [affected-rows (db/update-patient id body)]
                                               (if (= affected-rows 1)
                                                 {:status 200 :body {:id id}}
                                                 {:status 400 :body "Failed to update patient"}))
                                             {:status 400 :body "Invalid input"}))
-                    (DELETE "/" [] (ok (db/delete-patient id)))))
+                    (DELETE "/" [] {:status 200 :body (db/delete-patient id)})))
   (route/resources "/")
   (route/not-found "Not Found"))
 
-;; TODO dev [ring.middleware.reload :refer [wrap-reload]]
-;; TODO Improve input validation
-;; TODO Improve error handling
+;; TODO Validate date of birth
+;; TODO Delete entry
 ;; TODO Tests
-;; FIXME: Error with the date field
 
 (def app
   (->

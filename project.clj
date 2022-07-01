@@ -11,7 +11,6 @@
                  [ring/ring-jetty-adapter "1.9.5"]
                  [ring/ring-defaults "0.3.3"]
                  [compojure "1.6.1"]
-                 [metosin/ring-http-response "0.9.3"]
                  [com.layerware/hugsql "0.5.3"]
                  [org.postgresql/postgresql "42.3.1"]
                  [lilactown/helix "0.1.6"]
