@@ -34,7 +34,12 @@
                                                 {:status 200 :body {:id id}}
                                                 {:status 400 :body "Failed to update patient"}))
                                             {:status 400 :body "Invalid input"}))
-                    (DELETE "/" [] {:status 200 :body (db/delete-patient id)})))
+                    (DELETE "/" []
+                            (let [affected-rows (db/delete-patient id)]
+                              ;; TODO If affected more than 1 row?
+                              (if (= affected-rows 1)
+                                {:status 200 :body {:id id :deleted true}}
+                                {:status 400 :body "Failed to delete patient"})))))
   (route/resources "/")
   (route/not-found "Not Found"))
 
