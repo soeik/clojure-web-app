@@ -26,6 +26,7 @@
 (comment
   (.isBefore
    (ld/parse "2032-05-05" date-format)
+   (ld/parse "3050-05-05" date-format)
    (ld/now))
   (date-of-birth-valid? "2022-05-05")
   )

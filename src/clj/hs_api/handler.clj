@@ -46,6 +46,7 @@
 ;; TODO Search by name case insensitive
 ;; TODO Tests
 ;; TODO Date in this century
+;; TODO Serve index file properly
 
 (def app
   (->

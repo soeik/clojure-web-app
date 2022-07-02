@@ -26,7 +26,7 @@
 
   :main hs-api.server
 
-  :source-paths ["src/clj" "src/cljc" "src/cljs"]
+  :source-paths ["src/clj" "src/cljc" "src/cljs" "test/clj" "test/cljc" "test/cljs"]
 
   :resource-paths ["target" "resources"]
 
