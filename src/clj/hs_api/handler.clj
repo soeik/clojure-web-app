@@ -52,11 +52,11 @@
                              {:status 200 :body (entry->dto patient)}
                              {:status 404 :body "Patient not found"})))
                     (PUT "/" {:keys [db body]} (if (patient-valid? body)
-                                            (let [affected-rows ((db :update-patient) id body)]
-                                              (if (= affected-rows 1)
-                                                {:status 200 :body {:id id}}
-                                                {:status 400 :body "Failed to update patient"}))
-                                            {:status 400 :body "Invalid input"}))
+                                                 (let [affected-rows ((db :update-patient) id body)]
+                                                   (if (= affected-rows 1)
+                                                     {:status 200 :body {:id id}}
+                                                     {:status 400 :body "Failed to update patient"}))
+                                                 {:status 400 :body "Invalid input"}))
                     (DELETE "/" {:keys [db]}
                             (let [affected-rows ((db :delete-patient) id)]
                               (if (= affected-rows 1)
@@ -100,5 +100,6 @@
         :body {:name "Donald Trumpet",
                :address "Philadelphia ave."
                :gender "M"
+               :date-of-birth "1982-01-01"
                :oms "1234567890123456"}})
   (app {:request-method :delete, :uri "/api/patients/57c181d4-63f0-423a-8f57-96528b8a0695"}))
