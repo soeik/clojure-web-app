@@ -10,13 +10,11 @@
                    :address "Berlin, Germany"
                    :oms "1234567890123456"})
 
-(def mock-db-client {:search-patients (fn [search-query
-                                           gender
-                                           date-of-birth]
+(def mock-db-client {:search-patients (fn [search-query gender date-of-birth]
                                         [mock-patient])
                      :get-patient (fn [id] (if (= id "u-1") mock-patient nil))
                      :delete-patient (fn [id] (if (= id "u-1") 1 0))
-                     :update-patient (fn [id body] (if (= id "u-1") {:id id} 0))
+                     :update-patient (fn [id body] (if (= id "u-1") 1 0))
                      :create-patient (fn [patient] {:id "u-1"})})
 
 (deftest test-app
@@ -58,7 +56,7 @@
           (is (= (:status response) 400))))
 
       (testing "returns an id if request succeeded"
-        (let [response (app {:request-method :post,
+        (let [response (app {:request-method :post
                              :uri "/api/patients/"
                              :body (dissoc mock-patient :id)})]
           (is (= (:status response) 201))
