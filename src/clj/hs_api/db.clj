@@ -33,6 +33,12 @@
 (defn delete-patient [id]
   (query/delete-patient db {:id id}))
 
+(def db-client {:search-patients search-patients
+                :get-patient get-patient
+                :delete-patient delete-patient
+                :update-patient update-patient
+                :create-patient create-patient})
+
 
 (comment
   (search-patients nil nil nil)
