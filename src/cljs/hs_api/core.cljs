@@ -8,10 +8,8 @@
    [hs-api.views :as v]
    [hs-api.styles :as styles]))
 
-;; TODO: Switch to BrowserRouter
-
 (defnc app []
-  ($ router/HashRouter
+  ($ router/BrowserRouter
      (d/div
       ($ c/app-header)
       (d/div {:class-name (styles/page-wrapper)}

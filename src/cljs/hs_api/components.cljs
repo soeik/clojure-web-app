@@ -227,7 +227,7 @@
 (defnc patient-row
   [{:keys [id name oms date-of-birth gender address]}]
   (d/tr
-   (d/td (d/a {:href (str "#/patients/" id)} name))
+   (d/td (d/a {:href (str "/patients/" id)} name))
    (d/td oms)
    (d/td date-of-birth)
    (d/td (case gender

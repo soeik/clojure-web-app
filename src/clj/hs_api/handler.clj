@@ -1,13 +1,32 @@
 (ns hs-api.handler
-  (:require [clojure.java.io :as io]
-            [compojure.core :refer :all]
+  (:require [compojure.core :refer :all]
             [compojure.route :as route]
+            [ring.util.response :as response]
             [ring.middleware.data.json :refer [wrap-json-request wrap-json-response]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [hiccup.page :refer [include-js include-css html5]]
             [hs-api.patient :refer [patient-valid?]]
             [hs-api.db :refer [db-client]]))
 
-(defn index-handler [req] (io/file "resources/public/index.html"))
+(defn index-page []
+  (html5
+   [:head
+    [:meta {:charset "utf-8"}]
+    [:meta {:name "viewport"
+            :content "width=device-width, initial-scale=1"}]
+    (include-css "/css/normalize.css")
+    (include-css "/css/skeleton.css")
+    (include-css "/css/styles.css")]
+   [:body
+    [:div#app]
+    (include-js "/js/app.js")
+    [:script "js/app.js"]]))
+
+(defn index-handler
+  [_req]
+  {:status 200
+   :headers {"Content-Type" "text/html"}
+   :body (index-page)})
 
 (defn entry->dto [col]
   (as-> col v
