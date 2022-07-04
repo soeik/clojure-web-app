@@ -19,15 +19,15 @@
                  [cljs-ajax "0.7.5"]
                  [clj-commons/cljss "1.6.4"]]
 
-  :plugins [[lein-ring "0.12.5"]
-            [Lein-cljsbuild "1.1.8"]]
+  :plugins [[lein-ring "0.12.5"]]
 
   :ring {:handler hs-api.handler/app
          :port 9000}
 
+
   :jar-name "hs-api.jar"
   :uberjar-name "hs-api-standalone.jar"
-  :main hs-api.server
+  :main ^:skip-aot hs-api.server
   :source-paths ["src/clj" "src/cljc" "src/cljs"]
   :test-paths ["test/clj" "test/cljc" "test/cljs"]
   :resource-paths ["target" "resources"]
@@ -38,8 +38,6 @@
    [:cljsbuild :builds :app :compiler :output-dir]
    [:cljsbuild :builds :app :compiler :output-to]]
 
-  :jvm-opts ["-Xms500m" "-Xmx4g"]
-
   :profiles
   {:dev {:plugins []
          :dependencies [[javax.servlet/servlet-api "2.5"]
@@ -48,6 +46,7 @@
    :cljs {:dependencies [[com.google.javascript/closure-compiler-unshaded "v20220502"]]}
 
    :uberjar {:source-paths ["env/prod/clj"]
-             :env {:production true}
              :aot :all
-             :omit-source true}})
+             :env {:production true}
+             :omit-source true
+             :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})
