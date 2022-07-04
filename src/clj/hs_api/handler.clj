@@ -85,21 +85,3 @@
           (wrap-defaults (assoc-in site-defaults [:security :anti-forgery] false))
           (wrap-json-request :key-fn keyword)
           wrap-json-response))
-
-(comment
-  (def patient-id "1cc3719a-6470-4a81-84f6-d6c340add5036")
-  (entry->dto {:id 123})
-  ((create-app db-client) {:request-method :get, :uri "/api/patients"})
-  (app {:request-method :get, :uri "/api/patients", :params {:query "frank"}})
-  (app {:request-method :post, :uri "/api/patients", :body {:oms "1234567890123456",
-                                                            :name "Frank Cowperwood",
-                                                            :gender "M"
-                                                            :address "Sundgauerstr. 123" }})
-  (app {:request-method :put,
-        :uri "/api/patients/1cc3719a-6470-4a81-84f6-d6340add5036"
-        :body {:name "Donald Trumpet",
-               :address "Philadelphia ave."
-               :gender "M"
-               :date-of-birth "1982-01-01"
-               :oms "1234567890123456"}})
-  (app {:request-method :delete, :uri "/api/patients/57c181d4-63f0-423a-8f57-96528b8a0695"}))
