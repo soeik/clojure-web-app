@@ -11,7 +11,7 @@
 
 ;; TODO
 ;; Init db
-(defn init [] (query/init-db db))
+(query/init-db db)
 
 ;; Create a signle patient
 (defn create-patient [patient]

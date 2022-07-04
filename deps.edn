@@ -1,0 +1,22 @@
+{:paths ["src/clj" "src/cljc" "src/cljs"] ;; project paths
+ :deps {org.clojure/clojure {:mvn/version "1.11.1"}
+        org.clojure/clojurescript {:mvn/version "1.11.51"}
+        org.clojure/java.jdbc {:mvn/version "0.7.12"}
+        org.clojure/spec.alpha {:mvn/version "0.3.218"}
+        org.slf4j/slf4j-simple {:mvn/version "1.7.5"}
+        chbrown/ring-data.json {:mvn/version "0.1.0"}
+        ring/ring-jetty-adapter {:mvn/version "1.9.5"}
+        ring/ring-defaults {:mvn/version "0.3.3"}
+        compojure/compojure {:mvn/version "1.6.1"}
+        com.layerware/hugsql {:mvn/version "0.5.3"}
+        org.postgresql/postgresql {:mvn/version "42.3.1"}
+        hiccup/hiccup {:mvn/version "2.0.0-alpha2"}
+        com.widdindustries/cljc.java-time {:mvn/version "0.1.21"}
+        lilactown/helix {:mvn/version "0.1.6"}
+        cljs-ajax/cljs-ajax {:mvn/version "0.7.5"}
+        clj-commons/cljss {:mvn/version  "1.6.4"}}       ;; project deps
+
+ :aliases
+ {;; Run with clj -T:build function-in-build
+  :build {:deps {io.github.clojure/tools.build {:git/tag "v0.8.3" :git/sha "0d20256"}}
+          :ns-default build}}}

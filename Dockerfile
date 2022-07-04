@@ -2,7 +2,7 @@
 
     WORKDIR /
 
-    COPY target/hs-api.jar hs-api.jar
+    COPY target/hs-app-standalone.jar hs-app-standalone.jar
     EXPOSE 9000
 
-    CMD java -jar hs-api.jar
+    CMD java -jar hs-app-standalone.jar
