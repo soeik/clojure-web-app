@@ -1,6 +1,5 @@
 (ns hs-api.handler-test
   (:require [clojure.test :refer :all]
-            [ring.mock.request :as mock]
             [hs-api.handler :refer [create-app]]))
 
 (def mock-patient {:id "u-1"
@@ -20,32 +19,38 @@
 (deftest test-app
   (let [app (create-app mock-db-client)]
     (testing "not-found route"
-      (let [response (app (mock/request :get "/invalid"))]
+      (let [response (app {:request-method :get
+                           :uri "/invalid"})]
         (is (= (:status response) 404))))
 
     (testing "GET /patients"
-      (let [response (app (mock/request :get "/api/patients"))]
+      (let [response (app {:request-method :get
+                           :uri "/api/patients"})]
         (is (= (:status response) 200))
         (is (= (count (:body response)) 1))
         (is (= (:body response) [mock-patient]))))
 
     (testing "GET /patients/:id"
       (testing "returns a patient"
-        (let [response (app (mock/request :get "/api/patients/u-1"))]
+        (let [response (app {:request-method :get
+                             :uri  "/api/patients/u-1"})]
           (is (= (:status response) 200))
           (is (= (:body response) mock-patient))))
 
       (testing "returns status 404 if patient doesn't exist"
-        (let [response (app (mock/request :get "/api/patients/u-2"))]
+        (let [response (app {:request-method :get
+                             :uri "/api/patients/u-2"})]
           (is (= (:status response) 404)))))
 
     (testing "DELETE /patients/:id"
       (testing "returns ok if patient deleted"
-        (let [response (app (mock/request :delete "/api/patients/u-1"))]
+        (let [response (app {:request-method :delete
+                             :uri "/api/patients/u-1"})]
           (is (= (:status response) 200))))
 
       (testing "returns status 400 if deletion failed"
-        (let [response (app (mock/request :delete "/api/patients/u-2"))]
+        (let [response (app {:request-method :delete
+                             :uri "/api/patients/u-2"})]
           (is (= (:status response) 400)))))
 
     (testing "POST /patients"
