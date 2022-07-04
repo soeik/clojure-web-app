@@ -1,6 +1,6 @@
 (ns hs-api.patient
-  (:require [clojure.spec.alpha :as s])
-  (:require [hs-api.validation :as validation]))
+  (:require [clojure.spec.alpha :as s]
+            [hs-api.validation :as validation]))
 
 (s/def :form/name (s/and not-empty string?))
 (s/def :form/gender (s/and string? (partial re-matches #"^(?:M|F)$")))
