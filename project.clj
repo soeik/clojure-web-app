@@ -25,16 +25,29 @@
   :ring {:handler hs-api.handler/app
          :port 9000}
 
+  :jar-name "hs-api.jar"
+  :uberjar-name "hs-api-standalone.jar"
   :main hs-api.server
-
-  :source-paths ["src/clj" "src/cljc" "src/cljs" "test/clj" "test/cljc" "test/cljs"]
-
+  :source-paths ["src/clj" "src/cljc" "src/cljs"]
+  :test-paths ["test/clj" "test/cljc" "test/cljs"]
   :resource-paths ["target" "resources"]
+  :target-path "target/%s"
+  :compile-path "%s/class-files"
+  :clean-targets ^{:protect false}
+  [:target-path
+   [:cljsbuild :builds :app :compiler :output-dir]
+   [:cljsbuild :builds :app :compiler :output-to]]
+
+  :jvm-opts ["-Xms500m" "-Xmx4g"]
 
   :profiles
   {:dev {:plugins []
          :dependencies [[javax.servlet/servlet-api "2.5"]
-                        [ring/ring-mock "0.3.2"]
                         [thheller/shadow-cljs "2.19.1"]]}
 
-   :cljs {:dependencies [[com.google.javascript/closure-compiler-unshaded "v20220502"]]}})
+   :cljs {:dependencies [[com.google.javascript/closure-compiler-unshaded "v20220502"]]}
+
+   :uberjar {:source-paths ["env/prod/clj"]
+             :env {:production true}
+             :aot :all
+             :omit-source true}})
