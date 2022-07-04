@@ -1,0 +1,21 @@
+version: '3.0'
+services:
+  postgres:
+    restart: 'always'
+    environment:
+      - "POSTGRES_USER=postgres"
+      - "POSTGRES_DB=hs-db"
+      - "POSTGRES_PASSWORD=${DB_PASSWORD}"
+    volumes:
+      - /tmp/postgresdata:/var/lib/postgresql/data
+    image: 'postgres:alpine'
+  hs-app:
+    restart: 'always'
+    ports:
+      - '9000:9000'
+    environment:
+      - "DB_PASSWORD=${DB_PASSWORD}"
+      - "DB_HOST=postgres"
+    build:
+      context: .
+      dockerfile: Dockerfile
