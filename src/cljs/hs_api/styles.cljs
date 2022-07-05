@@ -104,6 +104,20 @@
   {:flex 1
    "table" {:width "100%"}})
 
+(defstyles table-sorting []
+  {:display "flex"
+   :gap "10px"
+   :align-items "center"
+   "label" {:margin "0"}
+   "select" {:padding "2px 4px"
+             :height "24px"}})
+
+(defstyles table-info []
+  {:display "flex"
+   :align-items "center"
+   :gap "20px"
+   :font-size "12px"})
+
 (defstyles form []
   {:display "flex"
    :flex-direction "column"

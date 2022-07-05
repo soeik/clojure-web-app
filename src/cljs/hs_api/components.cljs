@@ -235,14 +235,37 @@
            "F" "Female"))
    (d/td address)))
 
-(defnc patients-table [{:keys [patients]}]
+(defnc table-sorting
+  [{:keys [sort-column
+           on-sort-column-change
+           sort-order
+           on-sort-order-change]}]
+  (d/div {:class-name (styles/table-sorting)}
+   (d/label "Sort by:")
+   (d/select
+    {:value sort-column
+     :on-change on-sort-column-change}
+    (d/option {:value "name"} "Name")
+    (d/option {:value "date-of-birth"} "Date of birth")
+    (d/option {:value "gender"} "Gender"))
+   (d/label "Sort order:")
+   (d/select
+    {:value sort-order
+     :on-change on-sort-order-change}
+    (d/option {:value "asc"} "Ascending")
+    (d/option {:value "desc"} "Descending"))))
+
+(defnc patients-table [{:keys [patients children]}]
   (d/div {:class-name (styles/table-wrapper)}
-   (d/div {:class-name (styles/search-header)}
-    (d/div"Displaying patients: " (count patients))
-    ($ router/Link
-       {:class-name (styles/header-link)
-        :to "/patients/new"}
-       (d/button {:class-name "button-primary"} "New")))
+         (d/div {:class-name (styles/search-header)}
+                (d/div {:class-name (styles/table-info)}
+                       children
+                       (d/div
+                        "Displaying patients: " (count patients)))
+                ($ router/Link
+                   {:class-name (styles/header-link)
+                    :to "/patients/new"}
+                   (d/button {:class-name "button-primary"} "New")))
    (d/table
     (d/thead
      (d/tr

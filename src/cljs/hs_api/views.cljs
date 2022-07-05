@@ -23,7 +23,9 @@
        ($ c/patients-filter)
        (if searching ($ c/loading-page)
            (cond
-             (some? patients) ($ c/patients-table {:patients patients})
+             (some? patients) ($ c/patients-table
+                                 {:patients patients}
+                                 ($ c/table-sorting))
              (some? error) ($ c/error-page
                               {:full-width true
                                :error (str
