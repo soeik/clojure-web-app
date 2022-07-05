@@ -24,6 +24,7 @@
               key: hs-app-{{ checksum "deps.edn" }}
           # - run: lein do test, uberjar
           - run: apt-get install -y rlwrap
+          - run: sleep 1
           - run:  clj -T:build uberjar
           - persist_to_workspace:
               root: ~/cci-hs-app
