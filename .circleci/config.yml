@@ -23,6 +23,7 @@
                 - ~/.m2
               key: hs-app-{{ checksum "deps.edn" }}
           # - run: lein do test, uberjar
+          - run: sudo apt-get update -y
           - run: sudo apt-get install -y rlwrap
           - run: sleep 1
           - run:  clj -T:build uberjar
