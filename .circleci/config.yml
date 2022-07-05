@@ -10,7 +10,7 @@
       build:
         working_directory: ~/cci-hs-app # directory where steps will run
         docker:
-          - image: clojure:tools-deps
+          - image: clojure:tools-deps-alpine
         environment:
           JVM_OPTS: -Xmx3200m # limit the maximum heap size to prevent out of memory errors
         steps:
@@ -23,7 +23,9 @@
                 - ~/.m2
               key: hs-app-{{ checksum "deps.edn" }}
           # - run: lein do test, uberjar
-          - run  clj -T:build uberjar
+          - run: ls
+          - run: echo "Test job"
+          # - run: clojure build uberjar
           - persist_to_workspace:
               root: ~/cci-hs-app
               paths:
@@ -65,7 +67,7 @@
                 docker push $IMAGE_NAME:${CIRCLE_TAG}
     workflows:
       version: 2.1
-      main:
+      build:
         jobs:
           - build
       build_and_deploy:
