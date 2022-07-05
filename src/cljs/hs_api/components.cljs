@@ -122,8 +122,8 @@
                    :gender ""
                    :date-of-birth ""})
 
-(defnc patients-filter []
-  (let [[search set-search] (router/useSearchParams)
+(defnc patients-filter [{:keys [search set-search]}]
+  (let [
         [filter set-filter] (hooks/use-state {:query (or (js/search.get "query") "")
                                               :gender (or (js/search.get "gender") "")
                                               :date-of-birth (or (js/search.get "date-of-birth") "")})

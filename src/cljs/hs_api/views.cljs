@@ -12,7 +12,7 @@
    [hs-api.util :refer [use-request]]))
 
 (defnc list-patients []
-  (let [[search] (router/useSearchParams)
+  (let [[search set-search] (router/useSearchParams)
         [search-patients searching patients error] (use-request client/search-patients)
         query (js/search.get "query")
         gender (js/search.get "gender")
@@ -20,7 +20,9 @@
     (do
       (hooks/use-effect [search] (search-patients {:query query :gender gender :date-of-birth date-of-birth}))
       (d/div {:class-name (styles/search-page)}
-       ($ c/patients-filter)
+             ($ c/patients-filter
+                {:search search
+                 :set-search set-search})
        (if searching ($ c/loading-page)
            (cond
              (some? patients) ($ c/patients-table
