@@ -23,7 +23,8 @@
                 - ~/.m2
               key: hs-app-{{ checksum "deps.edn" }}
           # - run: lein do test, uberjar
-          - run: clojure build uberjar
+          # - run: clojure build uberjar
+          - run: lein uberjar
           - persist_to_workspace:
               root: ~/cci-hs-app
               paths:
@@ -65,7 +66,7 @@
                 docker push $IMAGE_NAME:${CIRCLE_TAG}
     workflows:
       version: 2.1
-      main:
+      build:
         jobs:
           - build
       build_and_deploy:
