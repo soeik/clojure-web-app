@@ -123,13 +123,14 @@
                    :date-of-birth ""})
 
 (defnc patients-filter [{:keys [search set-search]}]
-  (let [
-        [filter set-filter] (hooks/use-state {:query (or (js/search.get "query") "")
+  (let [[filter set-filter] (hooks/use-state {:query (or (js/search.get "query") "")
                                               :gender (or (js/search.get "gender") "")
                                               :date-of-birth (or (js/search.get "date-of-birth") "")})
         remove-empty-values (fn [filter] (apply dissoc
                                                filter
-                                               (for [[k v] filter :when (empty? v)] k)))]
+                                               (for [[k v] filter :when (empty? v)] k)))
+        on-reset-click #(do (set-filter empty-filter) (set-search #js {}))
+        on-search-click #(set-search (clj->js (remove-empty-values filter)))]
     (d/div {:class (styles/filters)}
            ($ search-input
               {:value (:query filter)
@@ -154,10 +155,9 @@
            (d/div
             {:class-name (styles/filter-actions)}
             (d/button {:class-name "button button-primary"
-                       :on-click #(set-search (clj->js (remove-empty-values filter)))} "Search")
+                       :on-click on-search-click} "Search")
             (d/button {:class-name "button"
-                       :on-click #(do (set-filter empty-filter)
-                                      (set-search #js {}))} "Reset")))))
+                       :on-click on-reset-click} "Reset")))))
 
 ;; TODO Move somewhere else?
 (def empty-patient {:name ""
