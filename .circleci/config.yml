@@ -23,7 +23,7 @@
                 - ~/.m2
               key: hs-app-{{ checksum "deps.edn" }}
           # - run: lein do test, uberjar
-          - run  clj -T:build uberjar
+          - run:  clj -T:build uberjar
           - persist_to_workspace:
               root: ~/cci-hs-app
               paths:
