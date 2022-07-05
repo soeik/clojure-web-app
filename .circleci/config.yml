@@ -25,8 +25,7 @@
           # - run: lein do test, uberjar
           - run: sudo apt-get update -y
           - run: sudo apt-get install -y rlwrap
-          - run: sleep 1
-          - run:  clj -T:build uberjar
+          - run:  sleep 0.1 && clj -T:build uberjar
           - persist_to_workspace:
               root: ~/cci-hs-app
               paths:
