@@ -9,9 +9,8 @@
          :password (System/getenv "DB_PASSWORD")
          :stringtype "unspecified"})
 
-;; TODO
 ;; Init db
-(query/init-db db)
+(defn init-db [] (query/init-db db))
 
 ;; Create a signle patient
 (defn create-patient [patient]

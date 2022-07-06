@@ -21,7 +21,7 @@
               paths:
                 - ~/.m2
               key: hs-app-{{ checksum "deps.edn" }}
-          - run:  clojure -T:build uber
+          - run: clojure -T:build uber
           - persist_to_workspace:
               root: ~/cci-hs-app
               paths:
