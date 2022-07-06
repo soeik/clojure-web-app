@@ -25,6 +25,12 @@
               name: Run tests
               command: clojure -X:test
           - run:
+              name: Install dependencies
+              comman: yarn install
+          - run:
+              name: Build cljs
+              command: yarn release app
+          - run:
               name: Build app
               command: clojure -T:build uber
           - persist_to_workspace:
