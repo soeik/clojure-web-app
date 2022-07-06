@@ -1,4 +1,4 @@
-{:paths ["src/clj" "src/cljc" "src/cljs"] ;; project paths
+{:paths ["src/clj" "src/cljc" "src/cljs"]
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
         org.clojure/clojurescript {:mvn/version "1.11.51"}
         org.clojure/java.jdbc {:mvn/version "0.7.12"}
@@ -14,9 +14,16 @@
         com.widdindustries/cljc.java-time {:mvn/version "0.1.21"}
         lilactown/helix {:mvn/version "0.1.6"}
         cljs-ajax/cljs-ajax {:mvn/version "0.7.5"}
-        clj-commons/cljss {:mvn/version  "1.6.4"}}       ;; project deps
+        clj-commons/cljss {:mvn/version  "1.6.4"}}
 
  :aliases
- {;; Run with clj -T:build function-in-build
+ {:run {:exec-fn hs-api.server/-main}
+  ;; Run with clj -T:build function-in-build
   :build {:deps {io.github.clojure/tools.build {:git/tag "v0.8.3" :git/sha "0d20256"}}
-          :ns-default build}}}
+          :ns-default build}
+  :test
+  {:extra-paths ["test/clj" "test/cljc"]
+   :extra-deps {io.github.cognitect-labs/test-runner
+                {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+   :main-opts ["-m" "cognitect.test-runner"]
+   :exec-fn cognitect.test-runner.api/test}}}
