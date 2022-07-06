@@ -3,7 +3,7 @@
       build:
         working_directory: ~/cci-hs-app # directory where steps will run
         docker:
-          - image: clojure:tools-deps-alpine
+          - image: clojure:tools-deps
         environment:
           JVM_OPTS: -Xmx3200m # limit the maximum heap size to prevent out of memory errors
         steps:
