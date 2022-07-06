@@ -1,6 +1,7 @@
 (ns hs-api.db
   (:require [hs-api.queries :as query]
-            [clojure.java.jdbc :as j]))
+            [clojure.java.jdbc :as j]
+            [clojure.string :refer [lower-case]]))
 
 (def sort-columns
   {:name "name"
@@ -32,7 +33,9 @@
   (query/update-patient db (assoc patient :id id)))
 
 (defn search-patients [search-query gender date-of-birth sort-column sort-order]
-  (query/search-patients db {:search-query (str "%" search-query "%")
+  (query/search-patients db {:search-query (if-not (empty? search-query)
+                                             (str "%" (lower-case search-query) "%")
+                                             nil)
                              :gender gender
                              :date-of-birth date-of-birth
                              :sort-column (sort-columns (keyword sort-column) "name")
