@@ -2,6 +2,15 @@
   (:require [hs-api.queries :as query]
             [clojure.java.jdbc :as j]))
 
+(def sort-columns
+  {:name "name"
+   :gender "gender"
+   :date-of-birth "date_of_birth"})
+
+(def sort-orders
+  {:asc "asc"
+   :desc "desc"})
+
 (def db {:dbtype "postgresql"
          :dbname "hs-db"
          :host (or (System/getenv "DB_HOST") "localhost")
@@ -10,7 +19,9 @@
          :stringtype "unspecified"})
 
 ;; Init db
-(defn init-db [] (query/init-db db))
+(defn init-db []
+  (do (query/create-gender-type db)
+      (query/create-patients-table db)))
 
 ;; Create a signle patient
 (defn create-patient [patient]
@@ -20,10 +31,12 @@
 (defn update-patient [id patient]
   (query/update-patient db (assoc patient :id id)))
 
-(defn search-patients [search-query gender date-of-birth]
+(defn search-patients [search-query gender date-of-birth sort-column sort-order]
   (query/search-patients db {:search-query (str "%" search-query "%")
                              :gender gender
-                             :date-of-birth date-of-birth}))
+                             :date-of-birth date-of-birth
+                             :sort-column (sort-columns (keyword sort-column) "name")
+                             :sort-order (sort-orders (keyword sort-order) "asc")}))
 
 ;; Get a single patient by id
 (defn get-patient [id]
@@ -40,7 +53,7 @@
                 :create-patient create-patient})
 
 (comment
-  (search-patients "098" "F" nil)
+  (search-patients nil nil nil "name" "desc")
   (query/search-patients-sqlvec db {:search-query "TEST"})
   (create-patient {:name "Frank Cowperwood"
                    :date-of-birth "1989-05-05"

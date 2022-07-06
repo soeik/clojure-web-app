@@ -38,7 +38,9 @@
                 (let [ query (get query-params "query")
                       gender (get query-params "gender")
                       date-of-birth (get query-params "date-of-birth")
-                      results ((db :search-patients) query gender date-of-birth)]
+                      sort-column (get query-params "sort-column")
+                      sort-order (get query-params "sort-order")
+                      results ((db :search-patients) query gender date-of-birth sort-column sort-order)]
                   {:status 200 :body (map entry->dto results)}))
            (POST "/" {:keys [db body]} (if (patient-valid? body)
                                          ;; TODO entry-dto adds date-of-birth

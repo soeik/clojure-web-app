@@ -32,6 +32,7 @@ WHERE (coalesce(:search-query, '') = ''
       OR (name LIKE :search-query OR oms LIKE :search-query))
 AND (coalesce(:gender, '') = '' OR  gender = :gender)
 AND (coalesce(:date-of-birth, '') = '' OR  date_of_birth = :date-of-birth)
+ORDER BY :sql:sort-column :sql:sort-order
 
 -- :name get-patient
 -- :result :one

@@ -29,7 +29,11 @@
         on-reset-click #(do (set-filter empty-filter) (set-search #js {}))
         on-search-click #(set-search (clj->js (remove-empty-values (merge filter sorting))))]
     (do
-      (hooks/use-effect [search] (search-patients {:query query :gender gender :date-of-birth date-of-birth}))
+      (hooks/use-effect [search sorting] (search-patients {:query query
+                                                           :gender gender
+                                                           :date-of-birth date-of-birth
+                                                           :sort-column (:sort-column sorting)
+                                                           :sort-order (:sort-order sorting)}))
       (d/div {:class-name (styles/search-page)}
              ($ c/patients-filter
                 {:filter filter
