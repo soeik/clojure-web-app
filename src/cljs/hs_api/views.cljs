@@ -17,14 +17,15 @@
         query (js/search.get "query")
         gender (js/search.get "gender")
         date-of-birth (js/search.get "date-of-birth")
-        ;; sort-column (js/search.get "sort-column")
-        ;; sort-order (js/search.get "sort-order")
+        sort-column (js/search.get "sort-column")
+        sort-order (js/search.get "sort-order")
         [search-patients searching patients error] (use-request client/search-patients)
         empty-filter {:query "" :gender "" :date-of-birth ""}
         [filter set-filter] (hooks/use-state {:query (or query "")
                                               :gender (or gender "")
                                               :date-of-birth (or date-of-birth "")})
-        [sorting set-sorting] (hooks/use-state {:sort-column "name" :sort-order "asc"})
+        [sorting set-sorting] (hooks/use-state {:sort-column (or sort-column "name")
+                                                :sort-order (or sort-order "asc")})
         on-reset-click #(do (set-filter empty-filter) (set-search #js {}))
         on-search-click #(set-search (clj->js (remove-empty-values (merge filter sorting))))]
     (do
