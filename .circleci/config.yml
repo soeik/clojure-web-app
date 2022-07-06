@@ -26,7 +26,7 @@
               command: clojure -X:test
           - run:
               name: Install dependencies
-              comman: yarn install
+              command: yarn install
           - run:
               name: Build cljs
               command: yarn release app
