@@ -1,19 +1,22 @@
-# hs-api
+# Clojure web app
 
-FIXME
 
-## Prerequisites
+## Commands
 
-You will need [Leiningen][] 2.0.0 or above installed.
+Compile cljs
+`yarn build`
 
-[leiningen]: https://github.com/technomancy/leiningen
+Watch cljs and start dev web server
+`yarn start`
 
-## Running
+Compile cljs for release
+`yarn release`
 
-To start a web server for the application, run:
+Start app
+`clj -X:run`
 
-    lein ring server
+Build app
+`clj -T:build uber`
 
-## License
-
-Copyright © 2022 FIXME
+Test app
+`clojure -X:test`
