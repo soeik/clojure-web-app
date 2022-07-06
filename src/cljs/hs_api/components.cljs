@@ -118,56 +118,43 @@
             :disabled disabled
             :on-change on-change}))
 
-(def empty-filter {:query ""
-                   :gender ""
-                   :date-of-birth ""})
 
-(defnc patients-filter [{:keys [search set-search]}]
-  (let [[filter set-filter] (hooks/use-state {:query (or (js/search.get "query") "")
-                                              :gender (or (js/search.get "gender") "")
-                                              :date-of-birth (or (js/search.get "date-of-birth") "")})
-        remove-empty-values (fn [filter] (apply dissoc
-                                               filter
-                                               (for [[k v] filter :when (empty? v)] k)))
-        on-reset-click #(do (set-filter empty-filter) (set-search #js {}))
-        on-search-click #(set-search (clj->js (remove-empty-values filter)))]
-    (d/div {:class (styles/filters)}
-           ($ search-input
-              {:value (:query filter)
-               :on-change #(set-filter
-                            (assoc filter :query (.. % -target -value)))})
-           (d/div
-            (d/label
-             {:class-name (styles/filter-label)}
-             "Gender")
-            ($ gender-input
-               {:value (:gender filter)
-                :on-change #(set-filter
-                             (assoc filter :gender (.. % -target -value)))}))
-           (d/div
-            (d/label
-             {:class-name (styles/filter-label)}
-             "Date of birth")
-            ($ date-of-birth-input
-               {:value (:date-of-birth filter)
-                :on-change #(set-filter
-                             (assoc filter :date-of-birth (.. % -target -value)))}))
-           (d/div
-            {:class-name (styles/filter-actions)}
-            (d/button {:class-name "button button-primary"
-                       :on-click on-search-click} "Search")
-            (d/button {:class-name "button"
-                       :on-click on-reset-click} "Reset")))))
-
-;; TODO Move somewhere else?
-(def empty-patient {:name ""
-                    :gender ""
-                    :date-of-birth ""
-                    :address ""
-                    :oms ""})
+(defnc patients-filter
+  [{:keys [filter
+           set-filter
+           on-reset-click
+           on-search-click]}]
+  (d/div {:class (styles/filters)}
+         ($ search-input
+            {:value (:query filter)
+             :on-change #(set-filter
+                          (assoc filter :query (.. % -target -value)))})
+         (d/div
+          (d/label
+           {:class-name (styles/filter-label)}
+           "Gender")
+          ($ gender-input
+             {:value (:gender filter)
+              :on-change #(set-filter
+                           (assoc filter :gender (.. % -target -value)))}))
+         (d/div
+          (d/label
+           {:class-name (styles/filter-label)}
+           "Date of birth")
+          ($ date-of-birth-input
+             {:value (:date-of-birth filter)
+              :on-change #(set-filter
+                           (assoc filter :date-of-birth (.. % -target -value)))}))
+         (d/div
+          {:class-name (styles/filter-actions)}
+          (d/button {:class-name "button button-primary"
+                     :on-click on-search-click} "Search")
+          (d/button {:class-name "button"
+                     :on-click on-reset-click} "Reset"))))
 
 (defnc patient-form [{:keys [on-submit patient in-progress editing error success]}]
-  (let [[form set-form] (hooks/use-state (or patient empty-patient))
+  (let [empty-patient {:name "" :gender "" :date-of-birth "" :address "" :oms ""}
+        [form set-form] (hooks/use-state (or patient empty-patient))
         [form-errors set-form-errors] (hooks/use-state nil)
         field-error (fn [key]
                       (if-let [msg (get form-errors key)]
@@ -244,14 +231,14 @@
    (d/label "Sort by:")
    (d/select
     {:value sort-column
-     :on-change on-sort-column-change}
+     :on-change #(on-sort-column-change (.. % -target -value))}
     (d/option {:value "name"} "Name")
     (d/option {:value "date-of-birth"} "Date of birth")
     (d/option {:value "gender"} "Gender"))
    (d/label "Sort order:")
    (d/select
     {:value sort-order
-     :on-change on-sort-order-change}
+     :on-change #(on-sort-order-change (.. % -target -value))}
     (d/option {:value "asc"} "Ascending")
     (d/option {:value "desc"} "Descending"))))
 

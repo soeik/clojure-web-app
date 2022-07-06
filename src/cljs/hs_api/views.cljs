@@ -9,32 +9,50 @@
    [hs-api.components :as c]
    [hs-api.styles :as styles]
    [hs-api.patient :refer [patient-valid?]]
-   [hs-api.util :refer [use-request]]))
+   [hs-api.util :refer [use-request remove-empty-values]]))
 
-(defnc list-patients []
+
+(defnc patients-page []
   (let [[search set-search] (router/useSearchParams)
-        [search-patients searching patients error] (use-request client/search-patients)
         query (js/search.get "query")
         gender (js/search.get "gender")
-        date-of-birth (js/search.get "date-of-birth")]
+        date-of-birth (js/search.get "date-of-birth")
+        ;; sort-column (js/search.get "sort-column")
+        ;; sort-order (js/search.get "sort-order")
+        [search-patients searching patients error] (use-request client/search-patients)
+        empty-filter {:query "" :gender "" :date-of-birth ""}
+        [filter set-filter] (hooks/use-state {:query (or query "")
+                                              :gender (or gender "")
+                                              :date-of-birth (or date-of-birth "")})
+        [sorting set-sorting] (hooks/use-state {:sort-column "name" :sort-order "asc"})
+        on-reset-click #(do (set-filter empty-filter) (set-search #js {}))
+        on-search-click #(set-search (clj->js (remove-empty-values (merge filter sorting))))]
     (do
       (hooks/use-effect [search] (search-patients {:query query :gender gender :date-of-birth date-of-birth}))
       (d/div {:class-name (styles/search-page)}
              ($ c/patients-filter
-                {:search search
-                 :set-search set-search})
+                {:filter filter
+                 :set-filter set-filter
+                 :on-reset-click on-reset-click
+                 :on-search-click on-search-click})
        (if searching ($ c/loading-page)
            (cond
-             (some? patients) ($ c/patients-table
-                                 {:patients patients}
-                                 ($ c/table-sorting))
-             (some? error) ($ c/error-page
-                              {:full-width true
-                               :error (str
-                                       "Failed to perform search: "
-                                       (:status-text error))})))))))
+             (some? patients)
+             ($ c/patients-table
+                {:patients patients}
+                ($ c/table-sorting
+                   {:sort-column (:sort-column sorting)
+                    :sort-order (:sort-order sorting)
+                    :on-sort-column-change #(set-sorting assoc :sort-column %)
+                    :on-sort-order-change #(set-sorting assoc :sort-order %)}))
+             (some? error)
+             ($ c/error-page
+                {:full-width true
+                 :error (str
+                         "Failed to perform search: "
+                         (:status-text error))})))))))
 
-(defnc new-patient []
+(defnc new-patient-page []
   (let [[create-patient in-progress result error] (use-request client/create-patient)
         error-message (if (some? error) (str "Failed to create patient: " (:status-text error)) nil)
         success-message (if (some? result) "Patient successfully created" nil)]
@@ -48,7 +66,7 @@
                :success success-message
                :on-submit create-patient}))))
 
-(defnc edit-patient []
+(defnc edit-patient-page []
   (let [params (router/useParams)
         id (gobj/get params "id")
         navigate (router/useNavigate)

@@ -18,3 +18,6 @@
      in-progress
      result
      error]))
+
+(defn remove-empty-values [filter]
+  (apply dissoc filter (for [[k v] filter :when (empty? v)] k)))

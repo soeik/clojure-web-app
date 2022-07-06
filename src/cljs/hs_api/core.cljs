@@ -17,11 +17,11 @@
                 ($ router/Route {:path "/"
                                  :element ($ router/Navigate {:to "/patients"})})
                 ($ router/Route {:path    "/patients"
-                                 :element ($ v/list-patients)})
+                                 :element ($ v/patients-page)})
                 ($ router/Route {:path    "/patients/new"
-                                 :element ($ v/new-patient)})
+                                 :element ($ v/new-patient-page)})
                 ($ router/Route {:path    "/patients/:id"
-                                 :element ($ v/edit-patient)}))))))
+                                 :element ($ v/edit-patient-page)}))))))
 
 (defn render []
   (rdom/render ($ app) (js/document.getElementById "app")))
