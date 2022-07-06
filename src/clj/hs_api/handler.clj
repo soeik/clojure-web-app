@@ -19,8 +19,7 @@
     (include-css "/css/styles.css")]
    [:body
     [:div#app]
-    (include-js "/js/app.js")
-    [:script "js/app.js"]]))
+    (include-js "/js/app.js")]))
 
 (defn index-handler
   [_req]
