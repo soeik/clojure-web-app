@@ -75,8 +75,6 @@
   (fn [req]
     (f (assoc req :db db))))
 
-;; TODO Date in this century
-
 (defn create-app [db] (wrap-db (routes api-routes site-routes) db))
 
 (def app (->
