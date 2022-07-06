@@ -24,7 +24,7 @@
           - run:
               name: Run tests
               command: clojure -X:test
-          - run: sudo apt install curl
+          - run: apt install curl
           - run:
               name: Install yarn
               command: |
