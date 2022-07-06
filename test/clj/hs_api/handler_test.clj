@@ -9,7 +9,8 @@
                    :address "Berlin, Germany"
                    :oms "1234567890123456"})
 
-(def mock-db-client {:search-patients (fn [search-query gender date-of-birth]
+(def mock-db-client {:search-patients (fn
+                                        [search-query gender date-of-birth sort-column sort-order]
                                         [mock-patient])
                      :get-patient (fn [id] (if (= id "u-1") mock-patient nil))
                      :delete-patient (fn [id] (if (= id "u-1") 1 0))
