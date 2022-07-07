@@ -24,7 +24,7 @@
           - run:
               name: Run tests
               command: clojure -X:test
-          - run: apt update && apt install --assume-yes curl
+          - run: apt update && apt install --assume-yes curl nodejs
           - run:
               name: Install yarn
               command: |
