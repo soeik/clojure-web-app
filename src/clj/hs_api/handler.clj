@@ -35,7 +35,7 @@
 (defroutes api-routes
   (context "/api/patients" []
            (GET "/" {:keys [db query-params]}
-                (let [ query (get query-params "query")
+                (let [query (get query-params "query")
                       gender (get query-params "gender")
                       date-of-birth (get query-params "date-of-birth")
                       sort-column (get query-params "sort-column")
