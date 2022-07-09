@@ -2,6 +2,7 @@
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.util.response :as response]
+            [ring.middleware.resource :refer [wrap-resource]]
             [ring.middleware.data.json :refer [wrap-json-request wrap-json-response]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [hiccup.page :refer [include-js include-css html5]]
@@ -35,7 +36,7 @@
 (defroutes api-routes
   (context "/api/patients" []
            (GET "/" {:keys [db query-params]}
-                (let [ query (get query-params "query")
+                (let [query (get query-params "query")
                       gender (get query-params "gender")
                       date-of-birth (get query-params "date-of-birth")
                       sort-column (get query-params "sort-column")
@@ -68,14 +69,16 @@
   (GET "/" [] index-handler)
   (GET "/patients" [] index-handler)
   (GET "/patients/:id" [] index-handler)
-  (route/resources "/")
   (route/not-found "Not Found"))
 
 (defn wrap-db [f db]
   (fn [req]
     (f (assoc req :db db))))
 
-(defn create-app [db] (wrap-db (routes api-routes site-routes) db))
+(defn create-app [db]
+  (routes
+   (wrap-db api-routes db)
+   (wrap-resource site-routes "/resources/public")))
 
 (def app (->
           (create-app db-client)
