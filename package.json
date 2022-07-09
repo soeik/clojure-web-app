@@ -16,5 +16,8 @@
     "start": "shadow-cljs watch app",
     "build": "shadow-cljs compile app",
     "release": "shadow-cljs release app"
+  },
+  "devDependencies": {
+    "cypress": "^10.3.0"
   }
 }
