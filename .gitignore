@@ -18,3 +18,4 @@ pom.xml.asc
 /.shadow-cljs/
 /resources/public/js/
 .cpcache/
+/cypress/videos
