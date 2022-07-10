@@ -39,16 +39,13 @@
           - run:
               name: Build app
               command: clojure -T:build uber
+          - run: docker-compose build
+          - run: docker-compose up --abort-on-container-exit --exit-code-from e2e
+          - run: cat e2e/cypress/results/output.xml
           - persist_to_workspace:
               root: ~/cci-hs-app
               paths:
                 - target
-      e2e:
-         working_directory: ~/cci-hs-app
-         steps:
-             - run: docker-compose build
-             - run: docker-compose up --abort-on-container-exit --exit-code-from e2e
-             - run: cat e2e/cypress/results/output.xml
       build-docker:
         executor: docker-publisher
         steps:
@@ -89,7 +86,6 @@
       main:
         jobs:
           - build
-          - e2e
       build_and_deploy:
         jobs:
           - build:
