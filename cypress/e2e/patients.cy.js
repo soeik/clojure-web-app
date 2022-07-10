@@ -1,5 +1,15 @@
 describe('Patients spec', () => {
-    it('sparks joy', () => {
-        cy.visit('/')
+    it('creates and deletes user', () => {
+        cy.visit('/patients/new')
+        cy.get('#name').type('Test User')
+        cy.get('#gender').select('M')
+        cy.get('#date-of-birth').type('1990-01-01')
+        cy.get('#address').type('Test address')
+        cy.get('#oms').type('3216549870123456')
+        cy.contains('Save').click()
+        cy.contains('Patient successfully created').should('exist')
+        cy.visit('/patients')
+        cy.contains('Test User').click()
+        cy.contains('Delete').click()
     })
 })

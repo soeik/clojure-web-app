@@ -94,9 +94,9 @@
                  {:class-name (styles/page-title)}
                  (d/h4 (:name patient))
                  (d/button
-                  {:class-name (styles/icon-button)
+                  {:class-name "button"
                    :on-click (fn [] (delete-patient #(navigate "/patients")))}
-                  (d/i {:class-name (styles/icon :bin)})))
+                  "Delete"))
                 ($ c/patient-form
                    {:key id
                     :patient patient
