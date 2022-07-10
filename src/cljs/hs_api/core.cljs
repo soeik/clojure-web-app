@@ -8,9 +8,6 @@
    [hs-api.views :as v]
    [hs-api.styles :as styles]))
 
-;; TODO Reset doesn't reset sorting
-;; TODO Sorting change doesn't update the search string
-
 (defnc app []
   ($ router/BrowserRouter
      (d/div

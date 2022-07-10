@@ -27,7 +27,7 @@
         [sorting set-sorting] (hooks/use-state {:sort-column (or sort-column "name")
                                                 :sort-order (or sort-order "asc")})
         on-reset-click #(do (set-filter empty-filter) (set-search #js {}))
-        on-search-click #(set-search (clj->js (remove-empty-values (merge filter sorting))))]
+        on-search-click #(set-search (clj->js (remove-empty-values filter)))]
     (do
       (hooks/use-effect [search sorting] (search-patients {:query query
                                                            :gender gender
