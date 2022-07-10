@@ -15,6 +15,7 @@ pom.xml.asc
 /.env
 /.sass-cache
 /node_modules
+/e2e/node_modules
 /.shadow-cljs/
 /resources/public/js/
 .cpcache/
