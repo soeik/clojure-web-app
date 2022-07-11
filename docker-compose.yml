@@ -14,7 +14,7 @@ services:
   hs-app:
     restart: 'always'
     ports:
-      - '9000:9000'
+      - '9000:80'
     environment:
       - "DB_PASSWORD=${DB_PASSWORD}"
       - "DB_HOST=postgres"
@@ -28,7 +28,7 @@ services:
     depends_on:
       - hs-app
     environment:
-      - CYPRESS_baseUrl=http://hs_app
+      - CYPRESS_baseUrl=http://hs-app
     command: npx cypress run
     volumes:
       - ./e2e/cypress:/app/cypress
