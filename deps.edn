@@ -29,4 +29,6 @@
   :data-seed {:extra-paths ["data"]
               :exec-fn data/seed}
   :data-cleanup {:extra-paths ["data"]
-                 :exec-fn data/cleanup}}}
+                 :exec-fn data/cleanup}
+  :data-reset {:extra-paths ["data"]
+               :exec-fn data/reset}}}

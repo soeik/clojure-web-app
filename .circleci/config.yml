@@ -40,9 +40,32 @@
               name: Build app
               command: clojure -T:build uber
           - persist_to_workspace:
-              root: ~/cci-hs-app
+              root: ~/
               paths:
-                - target
+                - cci-hs-app
+      run-e2e-tests:
+        working_directory: ~/cci-hs-app # directory where steps will run
+        docker:
+          - image: cimg/base:2022.06
+        steps:
+          - attach_workspace:
+              at: ~/
+          - setup_remote_docker:
+              version: 20.10.14
+          - run:
+              name: Build images and services
+              command: docker-compose build
+          - run:
+              name: Start docker compose
+              command: docker-compose up --abort-on-container-exit --exit-code-from e2e
+          - run:
+              name: Seed data
+              command: clojure -X:data-seed
+          - run:
+              name: Run e2e tests
+              command: npx cypress run
+          - run: cat /e2e/cypress/results/output.xml
+          - run: clojure -X:data-cleanup
       build-docker:
         executor: docker-publisher
         steps:
@@ -83,6 +106,9 @@
       main:
         jobs:
           - build
+          #- run-e2e-tests:
+          #    requires:
+          #      - build
       build_and_deploy:
         jobs:
           - build:

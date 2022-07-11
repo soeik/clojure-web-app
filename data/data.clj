@@ -15,6 +15,10 @@
   (println "Cleaning up the data")
   (cleanup-db))
 
+(defn reset [_]
+  (cleanup nil)
+  (seed nil))
+
 (comment
   (seed nil)
   (cleanup nil))
