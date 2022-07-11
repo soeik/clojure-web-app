@@ -51,7 +51,10 @@
           - attach_workspace:
               at: ~/
           - run:
-              name: Start app
+              name: Build images and services
+              command: docker-compose build -d
+          - run:
+              name: Start docker compose
               command: docker-compose up
       build-docker:
         executor: docker-publisher
