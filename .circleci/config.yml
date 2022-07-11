@@ -55,7 +55,7 @@
               version: 20.10.14
           - run:
               name: Build images and services
-              command: docker-compose build -d
+              command: docker-compose build
           - run:
               name: Start docker compose
               command: docker-compose up
