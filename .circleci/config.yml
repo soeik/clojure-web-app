@@ -39,6 +39,9 @@
           - run:
               name: Build app
               command: clojure -T:build uber
+          - run:
+              name: Start app
+              command: doocker-compose up
           - persist_to_workspace:
               root: ~/cci-hs-app
               paths:
