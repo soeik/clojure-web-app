@@ -39,13 +39,18 @@
           - run:
               name: Build app
               command: clojure -T:build uber
-          - run:
-              name: Start app
-              command: docker-compose up
           - persist_to_workspace:
               root: ~/cci-hs-app
               paths:
                 - target
+      run-e2e-tests:
+        working_directory: ~/cci-hs-app # directory where steps will run
+        docker:      
+          - image: docker/compose
+        steps:
+          - run:
+              name: Start app
+              command: docker-compose up
       build-docker:
         executor: docker-publisher
         steps:
@@ -86,6 +91,7 @@
       main:
         jobs:
           - build
+          - run-e2e-tests
       build_and_deploy:
         jobs:
           - build:
