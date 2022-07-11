@@ -20,3 +20,4 @@ pom.xml.asc
 /resources/public/js/
 .cpcache/
 /e2e/cypress/videos
+docker-compose.override.yml

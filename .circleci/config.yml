@@ -106,9 +106,9 @@
       main:
         jobs:
           - build
-          - run-e2e-tests:
-              requires:
-                - build
+          #- run-e2e-tests:
+          #    requires:
+          #      - build
       build_and_deploy:
         jobs:
           - build:
