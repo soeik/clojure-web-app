@@ -57,14 +57,14 @@
               command: docker-compose build
           - run:
               name: Start docker compose
-              command: docker-compose up
+              command: docker-compose up --abort-on-container-exit --exit-code-from e2e
           - run:
               name: Seed data
               command: clojure -X:data-seed
           - run:
               name: Run e2e tests
               command: npx cypress run
-          - run: cat /cypress/results/output.xml
+          - run: cat /e2e/cypress/results/output.xml
           - run: clojure -X:data-cleanup
       build-docker:
         executor: docker-publisher
