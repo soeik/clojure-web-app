@@ -24,6 +24,10 @@
   (do (query/create-gender-type db)
       (query/create-patients-table db)))
 
+;; Cleanup db
+(defn cleanup-db []
+  (query/cleanup-patients-table db))
+
 ;; Create a signle patient
 (defn create-patient [patient]
   (query/insert-patient db patient))
@@ -32,6 +36,7 @@
 (defn update-patient [id patient]
   (query/update-patient db (assoc patient :id id)))
 
+;; Search patients by name, oms, gender, date of birth
 (defn search-patients [search-query gender date-of-birth sort-column sort-order]
   (query/search-patients db {:search-query (if-not (empty? search-query)
                                              (str "%" (lower-case search-query) "%")

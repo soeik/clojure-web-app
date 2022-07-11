@@ -24,6 +24,11 @@ date_of_birth date,
 PRIMARY KEY (id)
 )
 
+-- :name cleanup-patients-table
+-- :command :execute
+-- :doc Deletes all data from the patients table
+TRUNCATE patients;
+
 -- :name search-patients
 -- :doc Search patients by name or oms
 SELECT id, name, address, oms, gender, date_of_birth "date-of-birth"
