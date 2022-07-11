@@ -61,7 +61,6 @@ describe('Patients spec', () => {
                 cy.get('tbody').find('tr').eq(0).contains('Test User 1')
                 cy.get('[name="sort-order"]').select('desc')
                 cy.get('tbody').find('tr').eq(0).contains('Test User 2')
-                cy.get('[name="sort-order"]').select('desc')
                 cy.get('tbody').find('tr').eq(1).contains('Test User 3')
             })
             it('sorts by date of birth', () => {
@@ -69,7 +68,6 @@ describe('Patients spec', () => {
                 cy.get('tbody').find('tr').eq(0).contains('Test User 1')
                 cy.get('[name="sort-order"]').select('desc')
                 cy.get('tbody').find('tr').eq(0).contains('Test User 3')
-                cy.get('[name="sort-order"]').select('desc')
                 cy.get('tbody').find('tr').eq(1).contains('Test User 2')
             })
             it('sorts by name', () => {
@@ -77,7 +75,6 @@ describe('Patients spec', () => {
                 cy.get('tbody').find('tr').eq(0).contains('Test User 1')
                 cy.get('[name="sort-order"]').select('desc')
                 cy.get('tbody').find('tr').eq(0).contains('Test User 3')
-                cy.get('[name="sort-order"]').select('desc')
                 cy.get('tbody').find('tr').eq(1).contains('Test User 2')
             })
         })
