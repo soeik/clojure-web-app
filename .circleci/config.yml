@@ -52,7 +52,7 @@
               at: ~/
           - run:
               name: Start app
-              command: sudo docker-compose up
+              command: docker-compose up
       build-docker:
         executor: docker-publisher
         steps:
