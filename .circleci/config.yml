@@ -48,6 +48,8 @@
         docker:      
           - image: docker/compose
         steps:
+          - attach_workspace:
+              at: ~/
           - run:
               name: Start app
               command: docker-compose up
