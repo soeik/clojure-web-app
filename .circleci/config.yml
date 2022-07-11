@@ -50,15 +50,14 @@
         steps:
           - attach_workspace:
               at: ~/
-              # ... steps for building/testing app ...
           - setup_remote_docker:
               version: 20.10.14
           - run:
               name: Build images and services
               command: docker-compose build
-          - run:
-              name: Start docker compose
-              command: docker-compose up
+          # - run:
+          #     name: Start docker compose
+          #     command: docker-compose up
       build-docker:
         executor: docker-publisher
         steps:
