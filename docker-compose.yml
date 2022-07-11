@@ -9,6 +9,8 @@ services:
     volumes:
       - /tmp/postgresdata:/var/lib/postgresql/data
     image: 'postgres:alpine'
+    ports:
+      - '5432:5432'
   hs-app:
     restart: 'always'
     ports:

@@ -45,7 +45,7 @@
                 - cci-hs-app
       run-e2e-tests:
         working_directory: ~/cci-hs-app # directory where steps will run
-        docker:      
+        docker:
           - image: cimg/base:2022.06
         steps:
           - attach_workspace:
@@ -55,9 +55,17 @@
           - run:
               name: Build images and services
               command: docker-compose build
-          # - run:
-          #     name: Start docker compose
-          #     command: docker-compose up
+          - run:
+              name: Start docker compose
+              command: docker-compose up
+          - run:
+              name: Seed data
+              command: clojure -X:data-seed
+          - run:
+              name: Run e2e tests
+              command: npx cypress run
+          - run: cat /cypress/results/output.xml
+          - run: clojure -X:data-cleanup
       build-docker:
         executor: docker-publisher
         steps:
@@ -99,7 +107,7 @@
         jobs:
           - build
           - run-e2e-tests:
-              requires: 
+              requires:
                 - build
       build_and_deploy:
         jobs:

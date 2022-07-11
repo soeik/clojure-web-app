@@ -12,6 +12,8 @@
     (create-patient patient)))
 
 (defn cleanup [_]
+  ;; FIXME: Remove
+  (println (System/getenv "DB_PASSWORD"))
   (println "Cleaning up the data")
   (cleanup-db))
 
