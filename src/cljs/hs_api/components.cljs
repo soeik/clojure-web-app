@@ -67,6 +67,7 @@
 
 (defnc search-input [{:keys [value on-change]}]
   (d/input {:type "text"
+            :name "search-query"
             :value value
             :placeholder "Search by name or OMS"
             ;; TODO: On keyDown enter
@@ -230,14 +231,16 @@
   (d/div {:class-name (styles/table-sorting)}
    (d/label "Sort by:")
    (d/select
-    {:value sort-column
+    {:name "sort-column"
+     :value sort-column
      :on-change #(on-sort-column-change (.. % -target -value))}
     (d/option {:value "name"} "Name")
     (d/option {:value "date-of-birth"} "Date of birth")
     (d/option {:value "gender"} "Gender"))
    (d/label "Sort order:")
    (d/select
-    {:value sort-order
+    {:name "sort-order"
+     :value sort-order
      :on-change #(on-sort-order-change (.. % -target -value))}
     (d/option {:value "asc"} "Ascending")
     (d/option {:value "desc"} "Descending"))))
