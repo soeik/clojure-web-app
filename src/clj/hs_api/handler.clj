@@ -1,13 +1,13 @@
 (ns hs-api.handler
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
-            [ring.util.response :as response]
-            [ring.middleware.resource :refer [wrap-resource]]
+            [hiccup.page :refer [include-js include-css html5]]
+            [hs-api.db :refer [db-client]]
+            [hs-api.patient :refer [patient-valid?]]
             [ring.middleware.data.json :refer [wrap-json-request wrap-json-response]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-            [hiccup.page :refer [include-js include-css html5]]
-            [hs-api.patient :refer [patient-valid?]]
-            [hs-api.db :refer [db-client]]))
+            [ring.middleware.resource :refer [wrap-resource]]
+            [ring.util.response :as response]))
 
 (defn index-page []
   (html5
