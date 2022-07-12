@@ -28,10 +28,8 @@
    :headers {"Content-Type" "text/html"}
    :body (index-page)})
 
-(defn entry->dto [col]
-  (as-> col v
-      (update v :date-of-birth str)
-      (update v :id str)))
+(defn entry->dto [entry]
+  (into {} (for [[k v] entry] [k (str v)])))
 
 (defroutes api-routes
   (context "/api/patients" []
@@ -44,7 +42,6 @@
                       results (db/search-patients query gender date-of-birth sort-column sort-order)]
                   {:status 200 :body (map entry->dto results)}))
            (POST "/" {body :body} (if (patient-valid? body)
-                                    ;; TODO entry-dto adds date-of-birth
                                     {:status 201 :body (entry->dto (db/create-patient body))}
                                     {:status 400 :body "Invalid input"}))
            (context "/:id" [id]
