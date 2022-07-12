@@ -2,7 +2,7 @@
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [hiccup.page :refer [include-js include-css html5]]
-            [hs-api.db :refer [db-client]]
+            [hs-api.db :as db]
             [hs-api.patient :refer [patient-valid?]]
             [ring.middleware.data.json :refer [wrap-json-request wrap-json-response]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
@@ -35,32 +35,32 @@
 
 (defroutes api-routes
   (context "/api/patients" []
-           (GET "/" {:keys [db query-params]}
+           (GET "/" {query-params :query-params}
                 (let [query (get query-params "query")
                       gender (get query-params "gender")
                       date-of-birth (get query-params "date-of-birth")
                       sort-column (get query-params "sort-column")
                       sort-order (get query-params "sort-order")
-                      results ((db :search-patients) query gender date-of-birth sort-column sort-order)]
+                      results (db/search-patients query gender date-of-birth sort-column sort-order)]
                   {:status 200 :body (map entry->dto results)}))
-           (POST "/" {:keys [db body]} (if (patient-valid? body)
-                                         ;; TODO entry-dto adds date-of-birth
-                                         {:status 201 :body (entry->dto ((db :create-patient) body))}
-                                         {:status 400 :body "Invalid input"}))
+           (POST "/" {body :body} (if (patient-valid? body)
+                                    ;; TODO entry-dto adds date-of-birth
+                                    {:status 201 :body (entry->dto (db/create-patient body))}
+                                    {:status 400 :body "Invalid input"}))
            (context "/:id" [id]
-                    (GET "/" {:keys [db]}
-                         (let [patient ((db :get-patient) id)]
+                    (GET "/" []
+                         (let [patient (db/get-patient id)]
                            (if (some? patient)
                              {:status 200 :body (entry->dto patient)}
                              {:status 404 :body "Patient not found"})))
-                    (PUT "/" {:keys [db body]} (if (patient-valid? body)
-                                                 (let [affected-rows ((db :update-patient) id body)]
-                                                   (if (= affected-rows 1)
-                                                     {:status 200 :body {:id id}}
-                                                     {:status 400 :body "Failed to update patient"}))
-                                                 {:status 400 :body "Invalid input"}))
-                    (DELETE "/" {:keys [db]}
-                            (let [affected-rows ((db :delete-patient) id)]
+                    (PUT "/" {body :body} (if (patient-valid? body)
+                                            (let [affected-rows (db/update-patient id body)]
+                                              (if (= affected-rows 1)
+                                                {:status 200 :body {:id id}}
+                                                {:status 400 :body "Failed to update patient"}))
+                                            {:status 400 :body "Invalid input"}))
+                    (DELETE "/" []
+                            (let [affected-rows (db/delete-patient id)]
                               (if (= affected-rows 1)
                                 {:status 200 :body {:id id :deleted true}}
                                 {:status 400 :body "Failed to delete patient"}))))))
@@ -71,17 +71,10 @@
   (GET "/patients/:id" [] index-handler)
   (route/not-found "Not Found"))
 
-(defn wrap-db [f db]
-  (fn [req]
-    (f (assoc req :db db))))
-
-(defn create-app [db]
-  (routes
-   (wrap-db api-routes db)
-   (wrap-resource site-routes "/resources/public")))
-
 (def app (->
-          (create-app db-client)
+          (routes
+           api-routes
+           (wrap-resource site-routes "/resources/public"))
           (wrap-defaults (assoc-in site-defaults [:security :anti-forgery] false))
           (wrap-json-request :key-fn keyword)
           wrap-json-response))

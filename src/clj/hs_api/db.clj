@@ -46,27 +46,3 @@
 
 (defn delete-patient [id]
   (query/delete-patient db {:id id}))
-
-(def db-client {:search-patients search-patients
-                :get-patient get-patient
-                :delete-patient delete-patient
-                :update-patient update-patient
-                :create-patient create-patient})
-
-(comment
-  (search-patients nil nil nil "name" "desc")
-  (query/search-patients-sqlvec db {:search-query "TEST"})
-  (create-patient {:name "Frank Cowperwood"
-                   :date-of-birth "1989-05-05"
-                   :address "Berlinerstrasse 124, Berlin, Germany"
-                   :oms "1234567890123456"
-                   :gender "M"})
-  (get-patient "b1393a03-8453-4f65-8b58-fd5631e66d66")
-  (update-patient "86f6e38b-fa0a-40b8-bce5-903df0fb97d4"
-                  {:id "b1393a03-8453-4f65-8b58-fd5631e66d66",
-                   :name "Donald Trumpet",
-                   :address "Philadelphia ave."
-                   :gender "M"
-                   :oms "5646576767"
-                   :date-of-birth "2016-06-20"})
-  (get-patient "unkown"))
