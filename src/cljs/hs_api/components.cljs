@@ -1,11 +1,11 @@
 (ns hs-api.components
   (:require
-   [helix.core :refer [defnc $ <>]]
-   [helix.hooks :as hooks]
-   [helix.dom :as d]
    ["react-router-dom" :as router]
-   [hs-api.styles :as styles]
-   [hs-api.patient :refer [validate-patient]]))
+   [helix.core :refer [defnc $ <>]]
+   [helix.dom :as d]
+   [helix.hooks :as hooks]
+   [hs-api.patient :refer [validate-patient]]
+   [hs-api.styles :as styles]))
 
 (defnc app-header []
   (d/div
@@ -213,7 +213,7 @@
                                       (set-form-errors errors)))})))))
 
 (defnc patient-row
-  [{:keys [id name oms date-of-birth gender address]}]
+  [{{:keys [id name oms date-of-birth gender address]} :patient}]
   (d/tr
    (d/td (d/a {:href (str "/patients/" id)} name))
    (d/td oms)
@@ -267,9 +267,4 @@
     (d/tbody
      (for [patient patients]
        ($ patient-row {:key (patient :id)
-                       :id (patient :id)
-                       :name (patient :name)
-                       :oms (patient :oms)
-                       :date-of-birth (patient :date-of-birth)
-                       :gender (patient :gender)
-                       :address (patient :address)}))))))
+                       :patient patient}))))))

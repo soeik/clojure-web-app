@@ -1,23 +1,7 @@
 (ns hs-api.handler-test
-  (:require [clojure.test :refer :all]
-            [hs-api.handler :refer [create-app]]))
+  (:require [clojure.test :refer :all]))
 
-(def mock-patient {:id "u-1"
-                   :name "Test User"
-                   :gender "M"
-                   :date-of-birth "1980-01-01"
-                   :address "Berlin, Germany"
-                   :oms "1234567890123456"})
-
-(def mock-db-client {:search-patients (fn
-                                        [search-query gender date-of-birth sort-column sort-order]
-                                        [mock-patient])
-                     :get-patient (fn [id] (if (= id "u-1") mock-patient nil))
-                     :delete-patient (fn [id] (if (= id "u-1") 1 0))
-                     :update-patient (fn [id body] (if (= id "u-1") 1 0))
-                     :create-patient (fn [patient] {:id "u-1"})})
-
-(deftest test-app
+#_(deftest test-app
   (let [app (create-app mock-db-client)]
     (testing "not-found route"
       (let [response (app {:request-method :get
