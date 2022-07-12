@@ -1,5 +1,5 @@
-(ns data
-  (:require [hs-api.db :refer :all]))
+(ns hs-api.data
+  (:require [hs-api.db :refer [create-patient cleanup-db]]))
 
 (def patients
   (list {:name "Test User 1" :address "Test address" :gender "M" :oms "1234567890123456" :date-of-birth "1990-01-01"}

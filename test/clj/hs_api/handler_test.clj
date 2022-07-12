@@ -1,74 +1,77 @@
 (ns hs-api.handler-test
-  (:require [clojure.test :refer :all]))
+  (:require [clojure.test :refer [deftest testing is]]
+            [matcho.core :refer :all :as m]
+            [hs-api.data :as db]
+            [hs-api.handler :refer [api-routes]]))
 
-#_(deftest test-app
-  (let [app (create-app mock-db-client)]
-    (testing "not-found route"
-      (let [response (app {:request-method :get
-                           :uri "/invalid"})]
-        (is (= (:status response) 404))))
+(def user-mock {:name "Test User"
+                :gender "M"
+                :date-of-birth "1990-01-01"
+                :address "Test Address"
+                :oms "1234567890123456"})
 
-    (testing "GET /patients"
-      (let [response (app {:request-method :get
-                           :uri "/api/patients"})]
-        (is (= (:status response) 200))
-        (is (= (count (:body response)) 1))
-        (is (= (:body response) [mock-patient]))))
+(defn get-patients [query-params]
+  (api-routes {:request-method :get
+                :uri "/api/patients"
+                :query-params query-params}))
 
-    (testing "GET /patients/:id"
-      (testing "returns a patient"
-        (let [response (app {:request-method :get
-                             :uri  "/api/patients/u-1"})]
-          (is (= (:status response) 200))
-          (is (= (:body response) mock-patient))))
+(defn create-patient [body]
+  (api-routes {:request-method :post
+               :uri "/api/patients"
+               :body body}))
 
-      (testing "returns status 404 if patient doesn't exist"
-        (let [response (app {:request-method :get
-                             :uri "/api/patients/u-2"})]
-          (is (= (:status response) 404)))))
+(deftest handler-test
+  (testing "api routes"
+    (testing "GET /api/patients"
+      (db/reset nil)
+      (testing "filtering"
+        (m/assert
+         {:status 200 :body #(= (count %) 3)}
+         (get-patients nil))
+        (m/assert
+         {:status 200 :body #(= (count %) 1)}
+         (get-patients {"date-of-birth" "1990-01-01"}))
+        (m/assert
+         {:status 200 :body #(= (count %) 1)}
+         (get-patients {"query" "321"}))
+        (m/assert
+         {:status 200 :body #(= (count %) 1)}
+         (get-patients {"query" "Test User 1"}))
+        (m/assert
+         {:status 200 :body #(= (count %) 2)}
+         (get-patients {"gender" "F"}))
+        (m/assert
+         {:status 200 :body #(= (count %) 1)}
+         (get-patients  {"gender" "M"})))
+      (testing "sorting"
+        (m/assert
+         {:status 200 :body #(= (:name (first %)) "Test User 1")}
+         (get-patients nil))
+        (m/assert
+         {:status 200 :body #(= (:name (first %)) "Test User 3")}
+         (get-patients {"sort-order" "desc"}))
+        (m/assert
+         {:status 200 :body #(= (:name (first %)) "Test User 2")}
+         (get-patients {"sort-column" "gender"
+                        "sort-order" "desc"}))
+        (m/assert
+         {:status 200 :body #(= (:name (first %)) "Test User 3")}
+         (get-patients {"sort-column" "date-of-birth"
+                        "sort-order" "desc"}))))
+    (testing "POST /api/patients"
+      (db/cleanup nil)
+      (m/assert
+       {:status 400 :body not-empty}
+       (create-patient {}))
+      (m/assert
+       {:status 201 :body not-empty}
+       (create-patient user-mock))
+      (m/assert
+       #(= (count (:body %)) 1)
+       (get-patients nil))
+      (m/assert
+       {:body #(= (dissoc (first %) :id) user-mock)}
+       (get-patients nil)))))
 
-    (testing "DELETE /patients/:id"
-      (testing "returns ok if patient deleted"
-        (let [response (app {:request-method :delete
-                             :uri "/api/patients/u-1"})]
-          (is (= (:status response) 200))))
-
-      (testing "returns status 400 if deletion failed"
-        (let [response (app {:request-method :delete
-                             :uri "/api/patients/u-2"})]
-          (is (= (:status response) 400)))))
-
-    (testing "POST /patients"
-      (testing "returns status 400 when input is invalid"
-        (let [response (app {:request-method :post
-                             :uri "/api/patients/"
-                             :body {:foo "bar"}})]
-          (is (= (:status response) 400))))
-
-      (testing "returns an id if request succeeded"
-        (let [response (app {:request-method :post
-                             :uri "/api/patients/"
-                             :body (dissoc mock-patient :id)})]
-          (is (= (:status response) 201))
-          (is (= (:id (:body response)) "u-1")))))
-
-    (testing "PUT /patients/:id"
-      (testing "updates patient"
-        (let [response (app {:request-method :put
-                             :uri "/api/patients/u-1"
-                             :body (dissoc mock-patient :id)})]
-          (is (= (:status response) 200))))
-
-      (testing "returns  Invalid input if patient is invalid"
-        (let [response (app {:request-method :put
-                             :uri "/api/patients/u-1"
-                             :body {}})]
-          (is (= (:status response) 400))
-          (is (= (:body response) "Invalid input"))))
-
-      (testing "returns Failed to update patient if patient not found"
-        (let [response (app {:request-method :put
-                             :uri "/api/patients/u-2"
-                             :body mock-patient})]
-          (is (= (:status response) 400))
-          (is (= (:body response) "Failed to update patient")))))))
+;; TODO: PUT
+;; TODO: Not Found
