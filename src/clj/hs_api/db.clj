@@ -19,24 +19,19 @@
          :password (System/getenv "DB_PASSWORD")
          :stringtype "unspecified"})
 
-;; Init db
 (defn init-db []
   (do (query/create-gender-type db)
       (query/create-patients-table db)))
 
-;; Cleanup db
 (defn cleanup-db []
   (query/cleanup-patients-table db))
 
-;; Create a signle patient
 (defn create-patient [patient]
   (query/insert-patient db patient))
 
-;; Update patient
 (defn update-patient [id patient]
   (query/update-patient db (assoc patient :id id)))
 
-;; Search patients by name, oms, gender, date of birth
 (defn search-patients [search-query gender date-of-birth sort-column sort-order]
   (query/search-patients db {:search-query (if-not (empty? search-query)
                                              (str "%" (lower-case search-query) "%")
@@ -46,11 +41,9 @@
                              :sort-column (sort-columns (keyword sort-column) "name")
                              :sort-order (sort-orders (keyword sort-order) "asc")}))
 
-;; Get a single patient by id
 (defn get-patient [id]
   (query/get-patient db {:id id}))
 
-;; Delete a single patient by id
 (defn delete-patient [id]
   (query/delete-patient db {:id id}))
 
