@@ -21,9 +21,9 @@
               paths:
                 - ~/.m2
               key: hs-app-{{ checksum "deps.edn" }}
-          - run:
-              name: Run tests
-              command: clojure -X:test
+          ;;- run:
+          ;;    name: Run tests
+          ;;    command: clojure -X:test
           - run: apt update && apt install --assume-yes curl nodejs
           - run:
               name: Install yarn
