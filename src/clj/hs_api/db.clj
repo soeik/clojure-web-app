@@ -1,7 +1,7 @@
 (ns hs-api.db
-  (:require [hs-api.queries :as query]
-            [clojure.java.jdbc :as j]
-            [clojure.string :refer [lower-case]]))
+  (:require [clojure.java.jdbc :as j]
+            [clojure.string :refer [lower-case]]
+            [hs-api.queries :as query]))
 
 (def sort-columns
   {:name "name"
