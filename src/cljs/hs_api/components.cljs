@@ -1,11 +1,11 @@
 (ns hs-api.components
   (:require
-   [helix.core :refer [defnc $ <>]]
-   [helix.hooks :as hooks]
-   [helix.dom :as d]
    ["react-router-dom" :as router]
-   [hs-api.styles :as styles]
-   [hs-api.patient :refer [validate-patient]]))
+   [helix.core :refer [defnc $ <>]]
+   [helix.dom :as d]
+   [helix.hooks :as hooks]
+   [hs-api.patient :refer [validate-patient]]
+   [hs-api.styles :as styles]))
 
 (defnc app-header []
   (d/div

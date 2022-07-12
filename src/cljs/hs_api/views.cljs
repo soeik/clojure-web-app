@@ -1,16 +1,15 @@
 (ns hs-api.views
   (:require
-   [helix.core :refer [defnc $]]
-   [helix.hooks :as hooks]
-   [helix.dom :as d]
    ["react-router-dom" :as router]
    [goog.object :as gobj]
+   [helix.core :refer [defnc $]]
+   [helix.dom :as d]
+   [helix.hooks :as hooks]
    [hs-api.client :as client]
    [hs-api.components :as c]
-   [hs-api.styles :as styles]
    [hs-api.patient :refer [patient-valid?]]
+   [hs-api.styles :as styles]
    [hs-api.util :refer [use-request remove-empty-values]]))
-
 
 (defnc patients-page []
   (let [[search set-search] (router/useSearchParams)
@@ -29,47 +28,54 @@
         on-reset-click #(do (set-filter empty-filter) (set-search #js {}))
         on-search-click #(set-search (clj->js (remove-empty-values filter)))]
     (do
-      (hooks/use-effect [search sorting] (search-patients {:query query
-                                                           :gender gender
-                                                           :date-of-birth date-of-birth
-                                                           :sort-column (:sort-column sorting)
-                                                           :sort-order (:sort-order sorting)}))
-      (d/div {:class-name (styles/search-page)}
-             ($ c/patients-filter
-                {:filter filter
-                 :set-filter set-filter
-                 :on-reset-click on-reset-click
-                 :on-search-click on-search-click})
-       (if searching ($ c/loading-page)
-           (cond
-             (some? patients)
-             ($ c/patients-table
-                {:patients patients}
-                ($ c/table-sorting
-                   {:sort-column (:sort-column sorting)
-                    :sort-order (:sort-order sorting)
-                    :on-sort-column-change #(set-sorting assoc :sort-column %)
-                    :on-sort-order-change #(set-sorting assoc :sort-order %)}))
-             (some? error)
-             ($ c/error-page
-                {:full-width true
-                 :error (str
-                         "Failed to perform search: "
-                         (:status-text error))})))))))
+      (hooks/use-effect
+       [search sorting]
+       (search-patients {:query query
+                         :gender gender
+                         :date-of-birth date-of-birth
+                         :sort-column (:sort-column sorting)
+                         :sort-order (:sort-order sorting)}))
+      (d/div
+       {:class-name (styles/search-page)}
+       ($ c/patients-filter
+          {:filter filter
+           :set-filter set-filter
+           :on-reset-click on-reset-click
+           :on-search-click on-search-click})
+       (if searching
+         ($ c/loading-page)
+         (cond
+           (some? patients)
+           ($ c/patients-table
+              {:patients patients}
+              ($ c/table-sorting
+                 {:sort-column (:sort-column sorting)
+                  :sort-order (:sort-order sorting)
+                  :on-sort-column-change #(set-sorting assoc :sort-column %)
+                  :on-sort-order-change #(set-sorting assoc :sort-order %)}))
+
+           (some? error)
+           ($ c/error-page
+              {:full-width true
+               :error (str
+                       "Failed to perform search: "
+                       (:status-text error))})))))))
 
 (defnc new-patient-page []
   (let [[create-patient in-progress result error] (use-request client/create-patient)
         error-message (if (some? error) (str "Failed to create patient: " (:status-text error)) nil)
         success-message (if (some? result) "Patient successfully created" nil)]
-    (d/div {:class-name (styles/page-content)}
-           (d/div {:class-name (styles/page-title)}
-                  (d/h4 "New patient"))
-           ($ c/patient-form
-              {:key (:id result)
-               :in-progress in-progress
-               :error error-message
-               :success success-message
-               :on-submit create-patient}))))
+    (d/div
+     {:class-name (styles/page-content)}
+     (d/div
+      {:class-name (styles/page-title)}
+      (d/h4 "New patient"))
+     ($ c/patient-form
+        {:key (:id result)
+         :in-progress in-progress
+         :error error-message
+         :success success-message
+         :on-submit create-patient}))))
 
 (defnc edit-patient-page []
   (let [params (router/useParams)
@@ -86,27 +92,29 @@
         success-message (if (some? updated) "Patient successfully updated" nil)]
     (do
       (hooks/use-effect [] (get-patient id))
-      (d/div {:class-name (styles/page-content)}
-             (cond
-               (some? patient)
-               (d/div
-                (d/div
-                 {:class-name (styles/page-title)}
-                 (d/h4 (:name patient))
-                 (d/button
-                  {:class-name "button"
-                   :on-click (fn [] (delete-patient #(navigate "/patients")))}
-                  "Delete"))
-                ($ c/patient-form
-                   {:key id
-                    :patient patient
-                    :in-progress updating
-                    :error error-message
-                    :success success-message
-                    :on-submit update-patient}))
-               (some? get-patient-error)
-               ($ c/error-page
-                  {:title "Failed to load patient"
-                   :error (str (:status get-patient-error) " " (:status-text get-patient-error))})
-               loading
-               ($ c/loading-page))))))
+      (d/div
+       {:class-name (styles/page-content)}
+       (cond
+         (some? patient)
+         (d/div
+          (d/div
+           {:class-name (styles/page-title)}
+           (d/h4 (:name patient))
+           (d/button
+            {:class-name "button"
+             :on-click (fn [] (delete-patient #(navigate "/patients")))}
+            "Delete"))
+          ($ c/patient-form
+             {:key id
+              :patient patient
+              :in-progress updating
+              :error error-message
+              :success success-message
+              :on-submit update-patient}))
+
+         (some? get-patient-error)
+         ($ c/error-page
+            {:title "Failed to load patient"
+             :error (str (:status get-patient-error) " " (:status-text get-patient-error))})
+         loading
+         ($ c/loading-page))))))

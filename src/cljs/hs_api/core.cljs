@@ -1,9 +1,9 @@
 (ns hs-api.core
   (:require
-   [helix.core :refer [defnc $]]
-   [helix.dom :as d]
    ["react-dom" :as rdom]
    ["react-router-dom" :as router]
+   [helix.core :refer [defnc $]]
+   [helix.dom :as d]
    [hs-api.components :as c]
    [hs-api.views :as v]
    [hs-api.styles :as styles]))
