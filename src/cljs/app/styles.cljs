@@ -43,7 +43,7 @@
 
 (defstyles utility-page [full-width]
   {:width (if full-width "100%" "800px")
-   :height "440px"})
+   :height "400px"})
 
 (defstyles utility-page-content []
   {:display "flex"
@@ -86,6 +86,11 @@
    "label" {:margin "0"}
    "select" {:padding "2px 4px"
              :height "24px"}})
+
+(defstyles table-filter []
+  {:display "flex"
+   :gap "10px"
+   :align-items "center"})
 
 (defstyles table-info []
   {:display "flex"

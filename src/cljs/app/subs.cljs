@@ -18,6 +18,11 @@
    (:api-errors db)))
 
 (re-frame/reg-sub
+ ::filter
+ (fn [db]
+   (:filter db)))
+
+(re-frame/reg-sub
  ::patients
  (fn [db]
    (:patients db)))
@@ -26,3 +31,8 @@
  ::patient
  (fn [db]
    (:patient db)))
+
+(re-frame/reg-sub
+ ::patient-id
+ (fn [db]
+   (:patient-id db)))

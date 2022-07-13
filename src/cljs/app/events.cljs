@@ -10,6 +10,9 @@
   "Concat any params to base url separated by /"
   (str/join "/" (concat ["/api"] params)))
 
+(defn remove-empty-values [filter]
+  (apply dissoc filter (for [[k v] filter :when (empty? v)] k)))
+
 (reg-event-fx
  ::initialize-db
  (fn [_ _]
@@ -35,7 +38,7 @@
  (fn [{:keys [db]} [_ _]]
    {:http-xhrio {:method          :get
                  :uri             (endpoint "patients")
-                 :params          (:filter db)
+                 :params          (remove-empty-values (:filter db))
                  :response-format (json-response-format {:keywords? true})
                  :on-success      [:get-patients-success]
                  :on-failure      [:api-request-error :get-patients]}
@@ -54,12 +57,26 @@
    {:db (assoc-in db [:filter k] v)
     :dispatch [:get-patients]}))
 
+(reg-event-fx
+ :reset-filter
+ (fn [{:keys [db]} [_ _]]
+   {:db (assoc db :filter db/default-filter)
+    :dispatch [:get-patients]}))
+
 (reg-event-db
  :set-patient-form
  (fn [db [_ [k v]]]
    (assoc-in db [:patient k] v)))
 
 ;; Create patient
+(reg-event-db
+ :new-patient
+ (fn [db [_ _]]
+   (-> db
+       (assoc :modal-visible true)
+       (assoc :patient db/empty-patient)
+       (assoc :patient-id nil))))
+
 (reg-event-fx
  :create-patient
  (fn [{:keys [db]} [_ _]]
@@ -72,10 +89,52 @@
                  :on-failure      [:api-request-error :create-patient]}
     :db          (assoc-in db [:in-progress :create-patient] true)}))
 
-(reg-event-db
+(reg-event-fx
  :create-patient-success
- (fn [db [_ _]]
-   {:db (-> db
-            (assoc-in [:in-progress :create-patient] false)
-            (assoc :patient db/empty-patient))
+ (fn [{:keys [db]} [_ _]]
+   {:db (assoc-in db [:in-progress :create-patient] false)
     :dispatch [:set-modal-visible false]}))
+
+;; Edit patien
+(reg-event-fx
+ :edit-patient
+ (fn [{:keys [db]} [_ id]]
+   {:db
+    (-> db
+        (assoc :modal-visible true)
+        (assoc :patient-id id))
+    :dispatch [:get-single-patient id]}))
+
+(reg-event-fx
+ :get-single-patient
+ (fn [{:keys [db]} [_ id]]
+   {:http-xhrio {:method          :get
+                 :uri             (endpoint "patients" id)
+                 :response-format (json-response-format {:keywords? true})
+                 :on-success      [:get-single-patient-success]
+                 :on-failure      [:api-request-error :get-single-patient]}
+    :db          (assoc-in db [:in-progress :get-single-patient] true)}))
+
+(reg-event-db
+ :get-single-patient-success
+ (fn [db [_ patient]]
+   (-> db
+       (assoc-in [:in-progress :get-single-patient] false)
+       (assoc :patient patient))))
+
+(reg-event-fx
+ :update-patient
+ (fn [{:keys [db]} [_ id]]
+   {:http-xhrio {:method          :put
+                 :uri             (endpoint "patients" id)
+                 :params          (:patient db)
+                 :format          (json-request-format)
+                 :response-format (json-response-format {:keywords? true})
+                 :on-success      [:create-patient-success]
+                 :on-failure      [:api-request-error :update-patient]}
+    :db          (assoc-in db [:in-progress :update-patient] true)}))
+
+(reg-event-db
+ :update-patient-success
+ (fn [db [_ _]]
+   {:db (assoc-in db [:in-progress :update-patient] false)}))

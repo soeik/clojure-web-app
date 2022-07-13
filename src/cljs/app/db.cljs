@@ -7,6 +7,13 @@
    :address ""
    :oms ""})
 
+(def default-filter
+  {:query ""
+   :gender ""
+   :date-of-birth ""
+   :sort-column "name"
+   :sort-order "asc"})
+
 (def default-db
   {:modal-visible false
    :patient empty-patient})

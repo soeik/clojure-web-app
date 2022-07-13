@@ -37,6 +37,16 @@
    [:div {:class-name (s/utility-page-content)}
     circle-loader-big]])
 
+(defn error-page [{:keys [title error full-width]}]
+  [:div {:class-name (s/utility-page full-width)}
+   (when-not (empty? title)
+     [:div
+      [:h4 title]
+      [:hr]])
+   [:div {:class-name (s/utility-page-content)}
+    [:h5 error]]])
+
+
 (defn modal-window [children]
   [:div {:class (s/modal-overlay)}
    [:div {:class (s/modal-content)}
@@ -52,15 +62,25 @@
         [:span text])]])
 
 ;; Search page
-;; TODO Make search input grow, add gender and date-of-birth
-(defn search-filter [on-filter-change]
-  [:div
+;; TODO Make search input grow add labels, sorting and date-of-birth
+(defn search-filter [{:keys [filter on-filter-change on-filter-reset]}]
+  [:div {:class (s/table-filter)}
    [:input {:type "text"
+            :value (:query filter)
             :placeholder "Search by name or OMS"
             :name "query"
-            :on-change #(on-filter-change [:query (.. % -target -value)])}]])
+            :on-change #(on-filter-change [:query (.. % -target -value)])}]
+   [:select
+    {:value (:gender filter)
+     :on-change #(on-filter-change [:gender (.. % -target -value)])}
+    [:option {:value ""} ""]
+    [:option {:value "M"} "Male"]
+    [:option {:value "F"} "Female"]]
+   [:button
+    {:on-click on-filter-reset}
+    "Reset"]])
 
-(defn patients-table [patients]
+(defn patients-table [patients on-patient-click]
   [:div {:class (s/table-wrapper)}
    [:table
     [:thead
@@ -74,7 +94,9 @@
      (for [patient patients]
        [:tr
         {:key (:id patient)}
-        [:td (:name patient)]
+        [:td
+         [:a {:href "#" :on-click #(on-patient-click (:id patient))}
+          (:name patient)]]
         [:td (:oms patient)]
         [:td (:date-of-birth patient)]
         [:td (:gender patient)]
@@ -113,7 +135,7 @@
       [:div {:class (s/form-group)}
        [:label {:for "gender"} "Gender"]
        [:select
-        { :name "name"
+        {:name "gender"
          :class (get-input-class :gender)
          :value (:gender patient)
          :disabled in-progress
@@ -157,7 +179,8 @@
      #_(when success [:div {:class (s/form-success)} success])
      [:div {:class (s/form-actions)}
       [:button.button
-       {:on-click on-cancel}
+       {:type "button"
+        :on-click on-cancel}
        "Close"]
       (progress-button
          {:text "Save"
