@@ -10,34 +10,72 @@
   "Concat any params to base url separated by /"
   (str/join "/" (concat ["/api"] params)))
 
-(reg-event-db
+(reg-event-fx
  ::initialize-db
  (fn [_ _]
-   db/default-db))
+   {:db db/default-db
+    :dispatch [:get-patients]}))
 
-;; -- GET Patients @ /api/articles --------------------------------------------
-;; usage (dispatch [:get-patients {params}]);;
+(reg-event-db
+ :set-modal-visible
+ (fn [db [_ visible]]
+   (assoc db :modal-visible visible)))
+
+(reg-event-db
+ :api-request-error
+ (fn [db [_ key response]]
+   (-> db
+       (assoc-in [:in-progress key] false)
+       (assoc-in [:api-errors key] true))))
+
+
+;; Get patients
 (reg-event-fx
  :get-patients
- (fn [{:keys [db]} [_ params]]  ;; params = { TODO }
+ (fn [{:keys [db]} [_ _]]
    {:http-xhrio {:method          :get
                  :uri             (endpoint "patients")
-                 ;; :params          params
-                 ;; :headers         (auth-header db)
+                 :params          (:filter db)
                  :response-format (json-response-format {:keywords? true})
                  :on-success      [:get-patients-success]
                  :on-failure      [:api-request-error :get-patients]}
-    :db          (assoc db :loading true)}))
+    :db          (assoc-in db [:in-progress :get-patients] true)}))
 
 (reg-event-db
  :get-patients-success
  (fn [db [_ patients]]
    (-> db
-       (assoc :loading false)
+       (assoc-in [:in-progress :get-patients] false)
        (assoc :patients patients))))
 
-;; FIXME Test event
+(reg-event-fx
+ :set-filter
+ (fn [{:keys [db]} [_ [k v]]]
+   {:db (assoc-in db [:filter k] v)
+    :dispatch [:get-patients]}))
+
 (reg-event-db
- :change-name
- (fn [db new-name]
-   (assoc db :name new-name)))
+ :set-patient-form
+ (fn [db [_ [k v]]]
+   (assoc-in db [:patient k] v)))
+
+;; Create patient
+(reg-event-fx
+ :create-patient
+ (fn [{:keys [db]} [_ _]]
+   {:http-xhrio {:method          :post
+                 :uri             (endpoint "patients")
+                 :params          (:patient db)
+                 :format          (json-request-format)
+                 :response-format (json-response-format {:keywords? true})
+                 :on-success      [:create-patient-success]
+                 :on-failure      [:api-request-error :create-patient]}
+    :db          (assoc-in db [:in-progress :create-patient] true)}))
+
+(reg-event-db
+ :create-patient-success
+ (fn [db [_ _]]
+   {:db (-> db
+            (assoc-in [:in-progress :create-patient] false)
+            (assoc :patient db/empty-patient))
+    :dispatch [:set-modal-visible false]}))

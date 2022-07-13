@@ -1,4 +1,12 @@
 (ns app.db)
 
+(def empty-patient
+  {:name ""
+   :gender ""
+   :date-of-birth ""
+   :address ""
+   :oms ""})
+
 (def default-db
-  {:name "re-frame"})
+  {:modal-visible false
+   :patient empty-patient})

@@ -256,15 +256,15 @@
                    {:class-name (styles/header-link)
                     :to "/patients/new"}
                    (d/button {:class-name "button-primary"} "New")))
-   (d/table
-    (d/thead
-     (d/tr
-      (d/th "Name")
-      (d/th "OMS")
-      (d/th "Date of birth")
-      (d/th "Gender")
-      (d/th "Address")))
-    (d/tbody
-     (for [patient patients]
-       ($ patient-row {:key (patient :id)
-                       :patient patient}))))))
+         (d/table
+          (d/thead
+           (d/tr
+            (d/th "Name")
+            (d/th "OMS")
+            (d/th "Date of birth")
+            (d/th "Gender")
+            (d/th "Address")))
+          (d/tbody
+           (for [patient patients]
+             ($ patient-row {:key (patient :id)
+                             :patient patient}))))))

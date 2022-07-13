@@ -3,11 +3,26 @@
    [re-frame.core :as re-frame]))
 
 (re-frame/reg-sub
- ::name
+ ::modal-visible
  (fn [db]
-   (:name db)))
+   (:modal-visible db)))
 
 (re-frame/reg-sub
- ::patients-count
+ ::in-progress
  (fn [db]
-   (count (:patients db))))
+   (:in-progress db)))
+
+(re-frame/reg-sub
+ ::api-errors
+ (fn [db]
+   (:api-errors db)))
+
+(re-frame/reg-sub
+ ::patients
+ (fn [db]
+   (:patients db)))
+
+(re-frame/reg-sub
+ ::patient
+ (fn [db]
+   (:patient db)))
