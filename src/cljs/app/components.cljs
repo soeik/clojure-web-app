@@ -93,10 +93,10 @@
     [:tbody
      (for [patient patients]
        [:tr
-        {:key (:id patient)}
-        [:td
-         [:a {:href "#" :on-click #(on-patient-click (:id patient))}
-          (:name patient)]]
+        {:class (s/table-row)
+         :key (:id patient)
+         :on-click #(on-patient-click (:id patient))}
+        [:td (:name patient)]
         [:td (:oms patient)]
         [:td (:date-of-birth patient)]
         [:td (:gender patient)]

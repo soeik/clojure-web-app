@@ -93,7 +93,8 @@
  :create-patient-success
  (fn [{:keys [db]} [_ _]]
    {:db (assoc-in db [:in-progress :create-patient] false)
-    :dispatch [:set-modal-visible false]}))
+    :fx [[:dispatch [:set-modal-visible false]]
+         [:dispatch [:get-patients nil]]]}))
 
 ;; Edit patien
 (reg-event-fx
@@ -130,11 +131,13 @@
                  :params          (:patient db)
                  :format          (json-request-format)
                  :response-format (json-response-format {:keywords? true})
-                 :on-success      [:create-patient-success]
+                 :on-success      [:update-patient-success]
                  :on-failure      [:api-request-error :update-patient]}
     :db          (assoc-in db [:in-progress :update-patient] true)}))
 
-(reg-event-db
+(reg-event-fx
  :update-patient-success
- (fn [db [_ _]]
-   {:db (assoc-in db [:in-progress :update-patient] false)}))
+ (fn [{:keys [db]} [_ _]]
+   {:db (assoc-in db [:in-progress :update-patient] false)
+    ;; TODO Notify user that patient is updated
+    :dispatch [:get-patients nil]}))

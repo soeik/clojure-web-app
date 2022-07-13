@@ -79,6 +79,11 @@
   {:flex 1
    "table" {:width "100%"}})
 
+(defstyles table-row []
+  {:cursor "pointer"
+   :transition "all ease-in-out .5s"
+   :&:hover {:background-color "#fc372424"}})
+
 (defstyles table-sorting []
   {:display "flex"
    :gap "10px"
