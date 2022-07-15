@@ -62,8 +62,6 @@
     (if in-progress circle-loader
         [:span text])]])
 
-;; Search page
-;; TODO Make search input grow add labels, sorting and date-of-birth
 (defn search-filter [{:keys [filter on-filter-change on-filter-reset]}]
   [:div {:class (s/table-filter)}
    [:div
