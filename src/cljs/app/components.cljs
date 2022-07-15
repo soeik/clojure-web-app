@@ -100,7 +100,7 @@
         [:td (:name patient)]
         [:td (:oms patient)]
         [:td (:date-of-birth patient)]
-        [:td (:gender patient)]
+        [:td (get {"F" "Female" "M" "Male"} (:gender patient) "-")]
         [:td (:address patient)]
         ])]]])
 
