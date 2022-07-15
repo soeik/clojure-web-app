@@ -1,6 +1,7 @@
 (ns app.components
   (:require
    [reagent.core :as r]
+   [re-frame.core :refer [subscribe dispatch]]
    [app.styles :as s]
    [app.subs :as subs]))
 
@@ -104,17 +105,17 @@
         ])]]])
 
 ;; Patient form
-(defn patient-form
-  [{:keys [on-submit
-           on-cancel
-           patient
-           in-progress
-           on-field-change
-           editing
-           error ;; TODO succes and error out
-           success]}]
-  (let [form-errors {} ;; TODO
+(defn patient-form []
+  (let [patient @(subscribe [::subs/patient])
+        in-progress (:submit-patient @(subscribe [::subs/in-progress]))
+        api-errors @(subscribe [::subs/api-request-error])
+        form-errors {} ;; TODO
         get-input-class #(when-not (nil? (form-errors %)) "invalid")
+        on-field-change (fn [field-name]
+                           (fn [e]
+                             (dispatch [:set-patient-form [field-name (.. e -target -value)]])))
+        on-submit #(dispatch [:submit-patient])
+        on-cancel #(dispatch [:set-modal-visible false])
         field-error (fn [key]
                       (if-let [msg (get form-errors key)]
                         [:div {:class (s/field-error)} msg]
@@ -175,7 +176,8 @@
          :disabled in-progress
          :on-change (on-field-change :oms)}]
        (field-error :oms)]]
-     (when error [:div {:class (s/form-error)} "Request failed"])
+     (when (:submit-patient api-errors)
+       [:div {:class (s/form-error)} "Request failed"])
      #_(when success [:div {:class (s/form-success)} success])
      [:div {:class (s/form-actions)}
       [:button.button

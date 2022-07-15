@@ -13,9 +13,9 @@
    (:in-progress db)))
 
 (re-frame/reg-sub
- ::api-errors
+ ::api-request-error
  (fn [db]
-   (:api-errors db)))
+   (:api-request-errors db)))
 
 (re-frame/reg-sub
  ::filter

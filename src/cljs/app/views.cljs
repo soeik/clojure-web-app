@@ -5,41 +5,24 @@
    [app.components :as c]
    [app.styles :as s]))
 
-(defn edit-patient []
-  (let [modal-visible @(subscribe [::subs/modal-visible])
-        patient-id @(subscribe [::subs/patient-id])
-        patient @(subscribe [::subs/patient])
+(defn patient-panel []
+  (let [patient-id @(subscribe [::subs/patient-id])
         in-progress @(subscribe [::subs/in-progress])
-        api-errors @(subscribe [::subs/api-errors])
-        get-patient-error (:get-single-patient api-errors)
-        ;; TODO page title depending on edit / new
-        ;; TODO Title when error
-        page-title (if (nil? patient-id) "New patient" (:name patient))]
-    (when modal-visible
-      (c/modal-window
-       [:div
-        [:div {:class (s/page-title)}
-         [:h4 page-title]]
-        (if (:get-single-patient in-progress)
-          (c/loading-page nil)
-          (if (some? get-patient-error)
-            (c/error-page {:error "Failed to load patient"})
-            (c/patient-form
-             {:patient patient
-              :in-progress (or (:create-patient in-progress)
-                               (:update-patient in-progress))
-              :error (or (:create-patient api-errors)
-                         (:update-patient api-errors))
-              :on-field-change (fn [field-name]
-                                 (fn [e]
-                                   (dispatch [:set-patient-form [field-name (.. e -target -value)]])))
-              :on-submit #(dispatch (if (nil? patient-id)
-                                      [:create-patient]
-                                      [:update-patient patient-id]))
-              :on-cancel #(dispatch [:set-modal-visible false])})))]))))
+        api-errors @(subscribe [::subs/api-request-error])
+        title (if (nil? patient-id) "New patient" "Edit patient")]
+    (c/modal-window
+     [:div
+      [:div {:class (s/page-title)}
+       [:h4 title]]
+      (if (:get-single-patient in-progress)
+        (c/loading-page nil)
+        (if (some? (:get-single-patient api-errors))
+          (c/error-page {:error "Failed to load patient"})
+          (c/patient-form)))])))
 
 (defn main-panel []
-  (let [in-progress @(subscribe [::subs/in-progress])
+  (let [modal-visible @(subscribe [::subs/modal-visible])
+        in-progress @(subscribe [::subs/in-progress])
         patients @(subscribe [::subs/patients])
         filter @(subscribe [::subs/filter])
         set-filter #(dispatch [:set-filter %])
@@ -61,5 +44,4 @@
         patients
         #(dispatch [:edit-patient %])
         ))
-     (edit-patient)
-     ]))
+     (if modal-visible (patient-panel))]))

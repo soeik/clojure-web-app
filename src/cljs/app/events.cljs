@@ -22,15 +22,16 @@
 (reg-event-db
  :set-modal-visible
  (fn [db [_ visible]]
-   (assoc db :modal-visible visible)))
+   (-> db
+       (assoc :modal-visible visible)
+       (assoc-in [:api-request-errors :submit-patient] nil))))
 
 (reg-event-db
  :api-request-error
  (fn [db [_ key response]]
    (-> db
        (assoc-in [:in-progress key] false)
-       (assoc-in [:api-errors key] true))))
-
+       (assoc-in [:api-request-errors key] response))))
 
 ;; Get patients
 (reg-event-fx
@@ -41,7 +42,7 @@
                  :params          (remove-empty-values (:filter db))
                  :response-format (json-response-format {:keywords? true})
                  :on-success      [:get-patients-success]
-                 :on-failure      [:api-request-error :get-patients]}
+                 :on-failure      [:api-request-error]}
     :db          (assoc-in db [:in-progress :get-patients] true)}))
 
 (reg-event-db
@@ -68,6 +69,14 @@
  (fn [db [_ [k v]]]
    (assoc-in db [:patient k] v)))
 
+(reg-event-fx
+ :submit-patient
+ (fn [{:keys [db]} _]
+   {:dispatch
+    (if (nil? (:patient-id db))
+      [:create-patient]
+      [:update-patient])}))
+
 ;; Create patient
 (reg-event-db
  :new-patient
@@ -86,8 +95,8 @@
                  :format          (json-request-format)
                  :response-format (json-response-format {:keywords? true})
                  :on-success      [:create-patient-success]
-                 :on-failure      [:api-request-error :create-patient]}
-    :db          (assoc-in db [:in-progress :create-patient] true)}))
+                 :on-failure      [:api-request-error :submit-patient]}
+    :db          (assoc-in db [:in-progress :submit-patient] true)}))
 
 (reg-event-fx
  :create-patient-success
@@ -127,17 +136,19 @@
  :update-patient
  (fn [{:keys [db]} [_ id]]
    {:http-xhrio {:method          :put
-                 :uri             (endpoint "patients" id)
+                 :uri             (endpoint "patients" (:patient-id db))
                  :params          (:patient db)
                  :format          (json-request-format)
                  :response-format (json-response-format {:keywords? true})
                  :on-success      [:update-patient-success]
-                 :on-failure      [:api-request-error :update-patient]}
-    :db          (assoc-in db [:in-progress :update-patient] true)}))
+                 :on-failure      [:api-request-error :submit-patient]}
+    :db          (assoc-in db [:in-progress :submit-patient] true)}))
 
 (reg-event-fx
  :update-patient-success
  (fn [{:keys [db]} [_ _]]
-   {:db (assoc-in db [:in-progress :update-patient] false)
+   {:db (-> db
+            (assoc-in [:api-request-errors :submit-patient] nil)
+            (assoc-in [:in-progress :submit-patient] false))
     ;; TODO Notify user that patient is updated
     :dispatch [:get-patients nil]}))
