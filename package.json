@@ -7,6 +7,7 @@
   "license": "MIT",
   "dependencies": {
     "@js-joda/core": "3.2.0",
+    "highlight.js": "11.1.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-router-dom": "^6.3.0",
@@ -16,8 +17,5 @@
     "start": "shadow-cljs watch app",
     "build": "shadow-cljs compile app",
     "release": "shadow-cljs release app"
-  },
-  "devDependencies": {
-    "cypress": "^10.3.0"
   }
 }

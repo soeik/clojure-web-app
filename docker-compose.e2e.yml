@@ -3,15 +3,3 @@ services:
   postgres:
     ports:
       - '5432:5432'
-  e2e:
-    image: cypress
-    build: ./e2e
-    container_name: cypress
-    depends_on:
-      - hs-app
-    environment:
-      - CYPRESS_baseUrl=http://hs-app
-    command: npx cypress run
-    volumes:
-      - ./e2e/cypress:/app/cypress
-      - ./e2e/cypress.config.js:/app/cypress.config.js
