@@ -66,17 +66,36 @@
 ;; TODO Make search input grow add labels, sorting and date-of-birth
 (defn search-filter [{:keys [filter on-filter-change on-filter-reset]}]
   [:div {:class (s/table-filter)}
-   [:input {:type "text"
-            :value (:query filter)
-            :placeholder "Search by name or OMS"
-            :name "query"
-            :on-change #(on-filter-change [:query (.. % -target -value)])}]
-   [:select
-    {:value (:gender filter)
-     :on-change #(on-filter-change [:gender (.. % -target -value)])}
-    [:option {:value ""} ""]
-    [:option {:value "M"} "Male"]
-    [:option {:value "F"} "Female"]]
+   [:div
+    [:label "Filter"]
+    [:input {:type "text"
+             :value (:query filter)
+             :placeholder "Search by name or OMS"
+             :name "query"
+             :on-change #(on-filter-change [:query (.. % -target -value)])}]]
+   [:div
+    [:label "Gender"]
+    [:select
+     {:value (:gender filter)
+      :on-change #(on-filter-change [:gender (.. % -target -value)])}
+     [:option {:value ""} ""]
+     [:option {:value "M"} "Male"]
+     [:option {:value "F"} "Female"]]]
+   [:div
+    [:label "Sort by"]
+    [:select
+     {:value (:sort-column filter)
+      :on-change #(on-filter-change [:sort-column (.. % -target -value)])}
+     [:option {:value "name"} "Name"]
+     [:option {:value "gender"} "Gender"]
+     [:option {:value "date-of-birth"} "Date of birth"]]]
+   [:div
+    [:label "Sort order"]
+    [:select
+     {:value (:sort-order filter)
+      :on-change #(on-filter-change [:sort-order (.. % -target -value)])}
+     [:option {:value "asc"} "Ascending"]
+     [:option {:value "desc"} "Descending"]]]
    [:button
     {:on-click on-filter-reset}
     "Reset"]])

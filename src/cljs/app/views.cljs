@@ -33,7 +33,7 @@
        (c/search-filter {:filter filter
                          :on-filter-change set-filter
                          :on-filter-reset reset-filter})
-       [:div "Displaying patients: " (count patients)]]
+       #_[:div "Displaying patients: " (count patients)]]
       [:button.button-primary
        {:on-click #(dispatch [:new-patient nil])}
        "New"]]

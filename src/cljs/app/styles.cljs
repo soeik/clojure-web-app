@@ -81,8 +81,8 @@
 
 (defstyles table-row []
   {:cursor "pointer"
-   :transition "all ease-in-out .5s"
-   :&:hover {:background-color "#fc372424"}})
+   :transition "all ease-in-out .3s"
+   :&:hover {:background-color "#eeeeee24"}})
 
 (defstyles table-sorting []
   {:display "flex"
@@ -95,7 +95,7 @@
 (defstyles table-filter []
   {:display "flex"
    :gap "10px"
-   :align-items "center"})
+   :align-items "end"})
 
 (defstyles table-info []
   {:display "flex"
