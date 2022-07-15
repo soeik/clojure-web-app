@@ -16,4 +16,7 @@
 
 (def default-db
   {:modal-visible false
-   :patient empty-patient})
+   :patient empty-patient
+   :in-progress {}
+   :api-request-errors {}
+   :form-errors {}})

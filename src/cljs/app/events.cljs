@@ -25,6 +25,7 @@
  (fn [db [_ visible]]
    (-> db
        (assoc :modal-visible visible)
+       (assoc :form-errors {})
        (assoc-in [:api-request-errors :submit-patient] nil))))
 
 (reg-event-db
