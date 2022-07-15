@@ -112,7 +112,7 @@
 (reg-event-fx
  :create-patient-success
  (fn [{:keys [db]} [_ _]]
-   {:db (assoc-in db [:in-progress :create-patient] false)
+   {:db (assoc-in db [:in-progress :submit-patient] false)
     :fx [[:dispatch [:set-modal-visible false]]
          [:dispatch [:get-patients nil]]]}))
 
