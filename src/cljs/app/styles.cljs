@@ -1,9 +1,6 @@
 (ns app.styles
   (:require [cljss.core :refer-macros [defstyles]]))
 
-;; TODO Remove unused
-(def header-height 60)
-
 (def colors
   {:primary "#fc3724"
    :text-default "#353b50"
@@ -51,22 +48,12 @@
    :align-items "center"
    :justify-content "center"})
 
-(defstyles page-wrapper []
-  {:margin-top (str (+ header-height 20) "px")
-   :display "flex"
-   :justify-content "center"
-   :padding "0 10px"})
-
 (defstyles page-title []
   {:display "flex"
    :align-items "center"
    :justify-content "space-between"
    :border-bottom (str "1px solid " (colors :grey-light))
    :margin-bottom "40px"})
-
-(defstyles filter-label []
-  {:color (:text-light colors)
-   :font-size "12px"})
 
 (defstyles search-header []
   {:height "80px"
@@ -83,14 +70,6 @@
   {:cursor "pointer"
    :transition "all ease-in-out .3s"
    :&:hover {:background-color "#eeeeee24"}})
-
-(defstyles table-sorting []
-  {:display "flex"
-   :gap "10px"
-   :align-items "center"
-   "label" {:margin "0"}
-   "select" {:padding "2px 4px"
-             :height "24px"}})
 
 (defstyles table-filter []
   {:display "flex"
@@ -143,27 +122,3 @@
   {:margin-top "6px"
    :font-size "12px"
    :color "red"})
-
-(defstyles icon-button []
-  {:padding "10px 0"
-   :border "none"
-   :opacity "0.5"
-   :transition "opacity .15s ease-in-out"
-   :&:hover {:opacity "1"}})
-
-(def icons {:pencil "images/icon-pencil.png"
-            :bin "images/icon-bin.png"})
-
-(defstyles icon [icon]
-  {:display "block"
-   :width "20px"
-   :height "20px"
-   :background-image (str "url(\"" (icons icon) "\")")
-   :background-repeat "no-repeat"})
-
-(defstyles icon-delete []
-  {:display "block"
-   :width "20px"
-   :height "20px"
-   :background-image "url('images/icon-bin.png')"
-   :background-repeat "no-repeat"})
