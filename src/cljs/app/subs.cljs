@@ -28,6 +28,11 @@
    (:patients db)))
 
 (re-frame/reg-sub
+ ::form-errors
+ (fn [db]
+   (:form-errors db)))
+
+(re-frame/reg-sub
  ::patient
  (fn [db]
    (:patient db)))

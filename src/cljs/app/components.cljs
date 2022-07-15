@@ -128,7 +128,7 @@
   (let [patient @(subscribe [::subs/patient])
         in-progress (:submit-patient @(subscribe [::subs/in-progress]))
         api-errors @(subscribe [::subs/api-request-error])
-        form-errors {} ;; TODO
+        form-errors @(subscribe [::subs/form-errors])
         get-input-class #(when-not (nil? (form-errors %)) "invalid")
         on-field-change (fn [field-name]
                            (fn [e]

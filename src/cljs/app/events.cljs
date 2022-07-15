@@ -4,7 +4,8 @@
    [clojure.string :as str]
    [day8.re-frame.http-fx]
    [re-frame.core :refer[reg-event-db reg-event-fx]]
-   [app.db :as db]))
+   [app.db :as db]
+   [hs-api.patient :refer [validate-patient]]))
 
 (defn endpoint [& params]
   "Concat any params to base url separated by /"
@@ -73,9 +74,17 @@
  :submit-patient
  (fn [{:keys [db]} _]
    {:dispatch
-    (if (nil? (:patient-id db))
-      [:create-patient]
-      [:update-patient])}))
+    (let [errors (validate-patient (:patient db))]
+      (if (empty? errors)
+        (if (nil? (:patient-id db))
+          [:create-patient]
+          [:update-patient])
+        [:validation-failed errors]))}))
+
+(reg-event-db
+ :validation-failed
+ (fn [db [_ errors]]
+   (assoc db :form-errors errors)))
 
 ;; Create patient
 (reg-event-db
