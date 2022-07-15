@@ -126,6 +126,7 @@
   (let [patient @(subscribe [::subs/patient])
         in-progress (:submit-patient @(subscribe [::subs/in-progress]))
         api-errors @(subscribe [::subs/api-request-error])
+        success @(subscribe [::subs/submit-patient-success])
         form-errors @(subscribe [::subs/form-errors])
         get-input-class #(when-not (nil? (form-errors %)) "invalid")
         on-field-change (fn [field-name]
@@ -195,7 +196,7 @@
        (field-error :oms)]]
      (when (:submit-patient api-errors)
        [:div {:class (s/form-error)} "Request failed"])
-     #_(when success [:div {:class (s/form-success)} success])
+     (when success [:div {:class (s/form-success)} "Patient successfully saved"])
      [:div {:class (s/form-actions)}
       [:button.button
        {:type "button"

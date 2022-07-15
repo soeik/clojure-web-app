@@ -18,6 +18,11 @@
    (:api-request-errors db)))
 
 (re-frame/reg-sub
+ ::submit-patient-success
+ (fn [db]
+   (:submit-patient-success db)))
+
+(re-frame/reg-sub
  ::filter
  (fn [db]
    (:filter db)))

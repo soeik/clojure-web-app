@@ -25,6 +25,7 @@
  (fn [db [_ visible]]
    (-> db
        (assoc :modal-visible visible)
+       (assoc :submit-patient-success false)
        (assoc :form-errors {})
        (assoc-in [:api-request-errors :submit-patient] nil))))
 
@@ -159,6 +160,7 @@
  (fn [{:keys [db]} [_ _]]
    {:db (-> db
             (assoc-in [:api-request-errors :submit-patient] nil)
-            (assoc-in [:in-progress :submit-patient] false))
+            (assoc-in [:in-progress :submit-patient] false)
+            (assoc :submit-patient-success true))
     ;; TODO Notify user that patient is updated
     :dispatch [:get-patients nil]}))
